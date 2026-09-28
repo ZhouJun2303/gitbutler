@@ -88,6 +88,7 @@ import { assert } from "#ui/assert.ts";
 import { CommitRow } from "./CommitRow.tsx";
 import { IncomingRows } from "./IncomingRows.tsx";
 import { BranchRow } from "./BranchRow.tsx";
+import { useStackMenuItems } from "./useStackMenuItems.ts";
 import { commitGraphStatus, segmentPushStatusToGraphSegmentStatus } from "./graph-status.ts";
 import { pushActivities, usePendingPushBranches, type PushActivity } from "./push-activity.ts";
 import { useActiveListsHotkeys } from "./hotkeys.ts";
@@ -416,6 +417,7 @@ const BranchSegment: FC<{
 	setSize,
 }) => {
 	const descriptionId = useId();
+	const stackMenuItems = useStackMenuItems(projectId, stack);
 	const address = branchAddress({ branchRef: refName.fullNameBytes });
 	const isRenaming = useAppSelector((state) => {
 		const pending = projectSlice.selectors.selectPendingOperation(state, projectId);
@@ -449,7 +451,7 @@ const BranchSegment: FC<{
 				refName={refName}
 				lane={{
 					type: "stack",
-					stack,
+					stackMenuItems,
 					canTearOff: canTearOffBranch,
 					canRemove: canRemoveBranch,
 					canUpdateFromRemote: canIntegrateUpstream(segment),
