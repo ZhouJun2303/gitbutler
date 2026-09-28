@@ -39,9 +39,8 @@ import type {
 	Worktree,
 } from "@gitbutler/but-sdk";
 
-import { useMutationState, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Range, useVirtualizer } from "@tanstack/react-virtual";
-import type { PayloadFor } from "#electron/ipc.ts";
 import {
 	Activity,
 	type CSSProperties,
@@ -89,7 +88,8 @@ import { segmentBottomRelativeTo } from "#ui/api/stack.ts";
 import { assert } from "#ui/assert.ts";
 import { CommitRow } from "./CommitRow.tsx";
 import { IncomingRows } from "./IncomingRows.tsx";
-import { BranchRow, type PushActivity } from "./BranchRow.tsx";
+import { BranchRow } from "./BranchRow.tsx";
+import { pushActivities, usePendingPushBranches, type PushActivity } from "./push-activity.ts";
 import { useActiveListsHotkeys } from "./hotkeys.ts";
 import { UncommittedChangesRow } from "./UncommittedChangesRow.tsx";
 import { LastCommitLine } from "./LastCommitLine.tsx";
@@ -914,10 +914,7 @@ const StackC: FC<
 	};
 	// A card is a lane off the trunk, which runs behind it at the edge.
 	const behind = 1;
-	const topmostPendingPushIndex = stack.segments.findIndex(
-		(segment) =>
-			segment.refName && pendingPushBranches.has(decodeBytes(segment.refName.fullNameBytes)),
-	);
+	const segmentPushActivities = pushActivities(stack.segments, pendingPushBranches);
 	// Worktrees on the top branch's tip continue the card's line above it, so the
 	// branch row joins a rail that starts at the worktree rather than starting one.
 	const onTip = worktreesOnTip(worktrees, stack);
@@ -966,12 +963,7 @@ const StackC: FC<
 					if (key === undefined) return null;
 
 					const downstackPushStatus = assert(downstackPushStatuses[index]);
-					const pushActivity: PushActivity =
-						topmostPendingPushIndex !== -1
-							? index >= topmostPendingPushIndex
-								? "pushing"
-								: "blocked"
-							: "idle";
+					const pushActivity = assert(segmentPushActivities[index]);
 
 					return (
 						<Fragment key={key}>
@@ -1093,20 +1085,7 @@ const Stacks: FC<{
 	const foldedSegments = useAppSelector((state) =>
 		projectSlice.selectors.selectFoldedSegments(state, projectId),
 	);
-	const pendingPushBranchList = useMutationState({
-		filters: {
-			mutationKey: [projectId, "workspaceBranchAndAncestorsPush"],
-			status: "pending",
-		},
-		select: (mutation) =>
-			(mutation.state.variables as PayloadFor<"workspaceBranchAndAncestorsPush">).branch,
-	});
-	// React Compiler leaves components using useVirtualizer uncompiled, hence manual memo:
-	// a fresh Set every render would re-render every stack.
-	const pendingPushBranches = useMemo(
-		() => new Set(pendingPushBranchList),
-		[pendingPushBranchList],
-	);
+	const pendingPushBranches = usePendingPushBranches(projectId);
 	const retainScrollElement = useCallback(
 		(element: HTMLDivElement | null) => {
 			if (element) scrollElementRef.current = element;
