@@ -1,8 +1,59 @@
+/* Fills the height it is given: the header stays put and the rows scroll under it. */
+.panel {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.header {
+	display: flex;
+	column-gap: var(--gap-icon-text);
+	flex-shrink: 0;
+	align-items: center;
+	height: var(--size-header);
+	padding-inline: var(--padding-panel);
+}
+
+.title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* Short and fixed-width, so a narrow header truncates the title beside them instead. */
+.stats {
+	display: inline-flex;
+	column-gap: 6px;
+	flex-shrink: 0;
+	align-items: center;
+}
+
+.headerActions {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	margin-inline-start: auto;
+}
+
+.filtering {
+	column-gap: var(--space-sm);
+}
+
+.filterField {
+	flex-grow: 1;
+	min-width: 0;
+}
+
+.body {
+	flex: 1;
+}
+
 .list {
 	display: flex;
 	row-gap: 1px;
 	flex-direction: column;
 	padding-inline: var(--padding-list);
+	padding-block-end: var(--padding-list);
 }
 
 .item {
