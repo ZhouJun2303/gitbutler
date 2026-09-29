@@ -1,0 +1,80 @@
+/* Takes its place in the layout that holds it and scrolls within it rather than growing it. A
+   column, so the viewport can shrink to a height the area is capped at. */
+.root {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.viewport {
+	flex: 1 1 auto;
+	min-height: 0;
+	overscroll-behavior: contain;
+}
+
+/* Drawn over the content, so nothing is set aside for it and content that fits and content that
+   scrolls take the same width. */
+.scrollbar {
+	display: flex;
+	position: absolute;
+	/* 6px of thumb, 2px clear of the edge on either side. */
+	padding: 2px;
+	opacity: 0;
+	transition: opacity var(--transition-medium);
+
+	&[data-orientation="vertical"] {
+		width: 10px;
+		inset-block: 0;
+		inset-inline-end: 0;
+	}
+
+	&[data-orientation="horizontal"] {
+		height: 10px;
+		inset-block-end: 0;
+		inset-inline: 0;
+	}
+
+	/* Hovering is the pointer over the area, not just the bar. */
+	&[data-hovering],
+	&[data-scrolling] {
+		opacity: 1;
+	}
+}
+
+.thumb {
+	flex: 1;
+	border-radius: var(--radius-full);
+	background-color: color-mix(in srgb, var(--text-1) 15%, transparent);
+
+	&[data-orientation="vertical"] {
+		height: var(--scroll-area-thumb-height);
+	}
+
+	&[data-orientation="horizontal"] {
+		width: var(--scroll-area-thumb-width);
+	}
+
+	&:hover,
+	&:active {
+		background-color: color-mix(in srgb, var(--text-1) 25%, transparent);
+	}
+}
+
+/* A hairline across the top while the content is scrolled down, so rows passing under a sticky
+   header read as passing under it. */
+.separator::before {
+	z-index: 1;
+	position: absolute;
+	inset-inline: 0;
+	top: 0;
+	border-top: 1px solid var(--border-section);
+	content: "";
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--transition-fast);
+}
+
+.separator[data-overflow-y-start]::before {
+	opacity: 1;
+}
