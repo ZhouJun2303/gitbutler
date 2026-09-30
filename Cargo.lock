@@ -4107,6 +4107,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "backtrace",
+ "base64 0.22.1",
  "but",
  "but-action",
  "but-api",
@@ -4121,6 +4122,7 @@ dependencies = [
  "but-settings",
  "console-subscriber",
  "document-features",
+ "futures",
  "gitbutler-project",
  "gitbutler-watcher",
  "gix",
@@ -4128,6 +4130,7 @@ dependencies = [
  "open",
  "opener",
  "parking_lot",
+ "reqwest",
  "rusqlite",
  "serde",
  "serde_json",

@@ -162,10 +162,7 @@ export class AIService {
 			GitAIConfigKey.OpenAIModelName,
 			defaultModel,
 		);
-		if (Object.values(OpenAIModelName).includes(storedValue as OpenAIModelName)) {
-			return storedValue as OpenAIModelName;
-		}
-		return defaultModel;
+		return storedValue.trim() || defaultModel;
 	}
 
 	async getAnthropicKeyOption() {

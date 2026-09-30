@@ -1,16 +1,12 @@
+import { nativeFetch, usesNativeFetch } from "$lib/ai/nativeFetch";
 import {
 	SHORT_DEFAULT_BRANCH_TEMPLATE,
 	SHORT_DEFAULT_COMMIT_TEMPLATE,
 	SHORT_DEFAULT_PR_TEMPLATE,
 } from "$lib/ai/prompts";
+import { isTauri } from "@tauri-apps/api/core";
 import OpenAI from "openai";
-import type {
-	OpenAIModelName,
-	OpenRouterModelName,
-	Prompt,
-	AIClient,
-	AIEvalOptions,
-} from "$lib/ai/types";
+import type { Prompt, AIClient, AIEvalOptions } from "$lib/ai/types";
 
 const DEFAULT_MAX_TOKENS = 1024;
 
@@ -21,16 +17,19 @@ export class OpenAIClient implements AIClient {
 
 	private client: OpenAI;
 	private openAIKey: string;
-	private modelName: OpenAIModelName | OpenRouterModelName;
+	private modelName: string;
 
-	constructor(
-		openAIKey: string,
-		modelName: OpenAIModelName | OpenRouterModelName,
-		baseURL: string | undefined,
-	) {
+	constructor(openAIKey: string, modelName: string, baseURL: string | undefined) {
 		this.openAIKey = openAIKey;
 		this.modelName = modelName;
-		this.client = new OpenAI({ apiKey: openAIKey, dangerouslyAllowBrowser: true, baseURL });
+		this.client = new OpenAI({
+			apiKey: openAIKey,
+			dangerouslyAllowBrowser: true,
+			baseURL,
+			// A custom endpoint is called from the desktop process. The webview
+			// request is blocked when that host does not send CORS headers.
+			fetch: usesNativeFetch(baseURL, isTauri()) ? nativeFetch : undefined,
+		});
 	}
 
 	async evaluate(prompt: Prompt, options?: AIEvalOptions): Promise<string> {
