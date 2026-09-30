@@ -17,6 +17,13 @@ const en = {
 	"pr.draft": "Draft",
 	"pr.open": "Open",
 	"time.justNow": "just now",
+	"image.before": "Before",
+	"image.after": "After",
+	"image.removed": "Removed",
+	"image.added": "Added",
+	"image.twoUp": "2-up",
+	"image.swipe": "Swipe",
+	"image.onion": "Onion Skin",
 } as const;
 
 const zh: Record<keyof typeof en, string> = {
@@ -36,6 +43,13 @@ const zh: Record<keyof typeof en, string> = {
 	"pr.draft": "草稿",
 	"pr.open": "打开",
 	"time.justNow": "刚刚",
+	"image.before": "之前",
+	"image.after": "之后",
+	"image.removed": "已删除",
+	"image.added": "已添加",
+	"image.twoUp": "并排",
+	"image.swipe": "滑动",
+	"image.onion": "叠化",
 };
 
 export type UiMessageKey = keyof typeof en;

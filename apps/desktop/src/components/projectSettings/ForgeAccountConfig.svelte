@@ -1,4 +1,5 @@
 <script lang="ts" generics="TAccount">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { useSettingsModal } from "$lib/settings/settingsModal.svelte";
 	import { Button, CardGroup, Link, Select, SelectItem } from "@gitbutler/ui-svelte";
 	import type { Component, Snippet } from "svelte";
@@ -47,27 +48,30 @@
 <CardGroup.Item>
 	{#snippet title()}
 		{#if hasAccounts}
-			Configure {displayName} integration
+			{t("forgeAccount.configure", { name: displayName })}
 		{:else}
-			Connect your {displayName} account
+			{t("forgeAccount.connect", { name: displayName })}
 		{/if}
 	{/snippet}
 
 	{#snippet caption()}
-		Enable {requestType} creation. Read more in the <Link href={docsUrl}>docs</Link>
+		{t("forgeAccount.enableBefore", {
+			request: requestType === "merge request" ? t("forgeBanner.mrs") : t("forgeBanner.prs"),
+		})}
+		<Link href={docsUrl}>{t("forgeAccount.docs")}</Link>
 	{/snippet}
 
 	{#if !hasAccounts}
 		<div class="flex">
 			<Button onclick={() => openGeneralSettings("integrations")} style="pop" icon="link"
-				>Set up in General Settings</Button
+				>{t("forgeAccount.setup")}</Button
 			>
 		</div>
 	{:else}
 		{@const account = preferredAccount!}
 		{@const accountStr = accountToString(account)}
 		<Select
-			label="{displayName} account for this project"
+			label={t("forgeAccount.accountFor", { name: displayName })}
 			value={accountStr}
 			options={accounts.map((acc) => ({
 				label: getUsername(acc),

@@ -18,6 +18,7 @@
 	import { LISTING_SERVICE } from "$lib/forge/listingService.svelte";
 	import { createPollBackoff } from "$lib/forge/shared/pollErrorBackoff.svelte";
 	import { GIT_SERVICE } from "$lib/git/gitService";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { showInfo, showWarning } from "$lib/notifications/toasts";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
@@ -324,19 +325,16 @@
 			if (!info) return;
 
 			if (!info.is_exclusive) {
-				showInfo(
-					"Just FYI, this project is already open in another window",
-					"There might be some unexpected behavior if you open it in multiple windows",
-				);
+				showInfo(t("error.alreadyOpen"), t("error.alreadyOpenHelp"));
 			}
 
 			if (info.db_error) {
-				showError("The database was corrupted", info.db_error);
+				showError(t("error.db"), info.db_error);
 			}
 
 			if (info.headsup && localStorage.getItem(dontShowAgainKey) !== "1") {
-				showWarning("Important PSA", info.headsup, {
-					label: "Don't show again",
+				showWarning(t("error.psa"), info.headsup, {
+					label: t("error.dontShow"),
 					onClick: (dismiss) => {
 						localStorage.setItem(dontShowAgainKey, "1");
 						dismiss();
@@ -345,7 +343,7 @@
 			}
 		} catch (error: unknown) {
 			posthog.captureOnboarding(OnboardingEvent.SetProjectActiveFailed, error);
-			showError("Failed to set the project active", error);
+			showError(t("error.setActive"), error);
 		}
 	}
 

@@ -208,10 +208,11 @@
 			<div class="branch-view__empty-state__image">
 				{@html newBranchSmolSVG}
 			</div>
-			<h3 class="text-16 text-semibold branch-view__empty-state__title">This is a new branch</h3>
+			<h3 class="text-16 text-semibold branch-view__empty-state__title">
+				{t("branchDetails.newBranch")}
+			</h3>
 			<p class="text-13 text-body branch-view__empty-state__description">
-				Commit your changes here. You can stack additional branches or apply them independently. You
-				can also drag and drop files to start a new commit.
+				{t("branchDetails.newBranchHelp")}
 			</p>
 		</div>
 	{/if}

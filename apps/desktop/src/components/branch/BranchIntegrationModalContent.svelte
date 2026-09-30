@@ -1,6 +1,7 @@
 <script lang="ts">
 	import BranchIntegrationGraph from "$components/branch/BranchIntegrationGraph.svelte";
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { buildCurrentStateDisplayRows } from "$lib/upstream/branchIntegrationCurrentStateDisplay";
 	import {
@@ -37,39 +38,41 @@
 
 	const stackService = inject(STACK_SERVICE);
 	const DEFAULT_TEMPLATE: BranchIntegrationStrategy = "pullRebase";
-	const integrationTemplates: Array<{
-		id: BranchIntegrationStrategy;
-		label: string;
-		icon: IconName;
-		description: string;
-		recommended?: boolean;
-	}> = [
+	const integrationTemplates = $derived<
+		Array<{
+			id: BranchIntegrationStrategy;
+			label: string;
+			icon: IconName;
+			description: string;
+			recommended?: boolean;
+		}>
+	>([
 		{
 			id: "pullRebase",
-			label: "Pull rebase",
+			label: t("integrate.pullRebase"),
 			icon: "branch-top-up-arrow",
-			description: "Rebuilds the branch with remote commits first, then your local commits.",
+			description: t("integrate.pullRebaseHelp"),
 			recommended: true,
 		},
 		{
 			id: "smartSquash",
-			label: "Smart squash",
+			label: t("integrate.smartSquash"),
 			icon: "branch-double-commit",
-			description: "Merges matching commits (by Change ID), pull-rebases the rest.",
+			description: t("integrate.smartSquashHelp"),
 		},
 		{
 			id: "merge",
-			label: "Merge",
+			label: t("integrate.merge"),
 			icon: "branch-merge",
-			description: "Keeps local history and merges in the remote tip.",
+			description: t("integrate.mergeHelp"),
 		},
 		{
 			id: "pickRemote",
-			label: "Pick remote",
+			label: t("integrate.pickRemote"),
 			icon: "cherry-pick",
-			description: "Rebuilds the branch from remote commits only.",
+			description: t("integrate.pickRemoteHelp"),
 		},
-	];
+	]);
 	const VISIBLE_TEMPLATE_COUNT = 2;
 	let selectedTemplate = $state<BranchIntegrationStrategy>(DEFAULT_TEMPLATE);
 	const initialBranchIntegration = $derived(
@@ -215,9 +218,9 @@
 		})}
 		<div class="branch-integration">
 			<p class="text-13 text-body clr-text-2">
-				This branch and its remote have diverged.
+				{t("integrate.diverged")}
 				<br />
-				Pick an integration strategy below to combine them.
+				{t("integrate.pickStrategy")}
 			</p>
 
 			<div
@@ -248,7 +251,7 @@
 						<h3 class="text-13 text-bold strategy-card__title">
 							{template.label}
 							{#if template.recommended}
-								<span class="op-40">(Recommended)</span>
+								<span class="op-40">{t("integrate.recommended")}</span>
 							{/if}
 						</h3>
 						<p class="text-12 text-body strategy-card__caption">
@@ -273,7 +276,7 @@
 							{hiddenTemplates.map((t) => t.label.toLowerCase()).join(", ")}
 						</span>
 						<span class="text-12 underline-dotted strategy-card__more-link">
-							Show {hiddenTemplates.length} more
+							{t("integrate.showMore", { count: hiddenTemplates.length })}
 						</span>
 					</button>
 				{/if}
@@ -284,7 +287,7 @@
 			<div class="branch-integration__sections">
 				<div class="branch-integration__section">
 					<div class="branch-integration__section-header">
-						<Badge style="gray" kind="soft" size="tag">CURRENT STATE</Badge>
+						<Badge style="gray" kind="soft" size="tag">{t("integrate.current")}</Badge>
 						<div class="section-arrow">
 							<div class="section-arrow__line"></div>
 						</div>
@@ -304,7 +307,7 @@
 
 				<div class="branch-integration__section">
 					<div class="branch-integration__section-header">
-						<Badge style="gray" size="tag">OUTPUT BRANCH</Badge>
+						<Badge style="gray" size="tag">{t("integrate.output")}</Badge>
 					</div>
 
 					<section class="branch-integration__graph" data-testid="branch-integration-preview">
@@ -314,11 +317,11 @@
 							</div>
 						{:else if previewRows === null}
 							<div class="branch-integration__empty" data-testid="branch-integration-empty-state">
-								Preview produced no branch segment for this ref.
+								{t("integrate.noPreview")}
 							</div>
 						{:else if previewRows.length === 0}
 							<div class="branch-integration__empty" data-testid="branch-integration-empty-state">
-								The resulting branch would be empty.
+								{t("integrate.emptyResult")}
 							</div>
 						{:else}
 							<BranchIntegrationGraph
@@ -333,7 +336,7 @@
 		</div>
 
 		<ModalFooter>
-			<Button kind="outline" type="reset" onclick={closeModal}>Cancel</Button>
+			<Button kind="outline" type="reset" onclick={closeModal}>{t("general.cancel")}</Button>
 			<Button
 				style="pop"
 				type="button"
@@ -342,7 +345,7 @@
 				disabled={!preparedIntegration || preparedIntegration.steps.length === 0 || applying}
 				loading={applying}
 			>
-				Apply integration
+				{t("integrate.apply")}
 			</Button>
 		</ModalFooter>
 	{/snippet}

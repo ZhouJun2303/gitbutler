@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { persisted } from "@gitbutler/shared/persisted";
 
 	import {
@@ -41,7 +42,7 @@
 		kind="outline"
 		disabled={isFormBusy || isCreatingPR}
 		width={120}
-		onclick={onCancel}>Cancel</Button
+		onclick={onCancel}>{t("general.cancel")}</Button
 	>
 
 	<DropdownButton
@@ -57,12 +58,12 @@
 		disabled={submitDisabled || isFormBusy}
 		hotkey="⌘↵"
 	>
-		{$createDraft ? `Create ${unit} draft` : `Create ${unit}`}
+		{$createDraft ? t("review.draft", { unit }) : t("review.create", { unit })}
 
 		{#snippet contextMenuSlot()}
 			<ContextMenuSection>
 				<ContextMenuItem
-					label="Create {unit} draft"
+					label={t("review.draft", { unit })}
 					onclick={() => {
 						$createDraft = true;
 						commitButton?.close();
@@ -71,7 +72,7 @@
 				/>
 
 				<ContextMenuItem
-					label="Create {unit}"
+					label={t("review.create", { unit })}
 					onclick={() => {
 						$createDraft = false;
 						commitButton?.close();

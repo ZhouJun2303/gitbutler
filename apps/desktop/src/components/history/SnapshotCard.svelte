@@ -244,7 +244,7 @@
 
 			{#if operation.commitMessage}
 				<p class="text-12 text-body snapshot-commit-message">
-					<span>Message:</span>
+					<span>{t("list.message")}</span>
 					{operation.commitMessage}
 				</p>
 			{/if}

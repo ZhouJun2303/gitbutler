@@ -6,6 +6,7 @@
 	import newZenSvg from "$lib/assets/illustrations/new-zen.svg?raw";
 	import { BASE_BRANCH_SERVICE } from "$lib/baseBranch/baseBranchService.svelte";
 	import { showError } from "$lib/error/showError";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { SETTINGS_SERVICE } from "$lib/settings/appSettings";
 	import { OnboardingEvent, POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
@@ -60,7 +61,7 @@
 			await goto(destination, { invalidateAll: true });
 			return true;
 		} catch (error) {
-			showError("The target was set, but the project could not be opened", error);
+			showError(t("error.targetOpen"), error);
 			return false;
 		}
 	}

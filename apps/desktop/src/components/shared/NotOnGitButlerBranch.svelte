@@ -4,6 +4,7 @@
 	import AppLayout from "$components/views/AppLayout.svelte";
 	import directionDoubtSvg from "$lib/assets/illustrations/direction-doubt.svg?raw";
 	import { BASE_BRANCH_SERVICE } from "$lib/baseBranch/baseBranchService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { WORKTREE_SERVICE } from "$lib/worktree/worktreeService.svelte";
 	import { inject } from "@gitbutler/core/context";
@@ -48,12 +49,12 @@
 
 	let handlingOptions: { label: string; value: OptionsType; selectable: boolean }[] = $derived([
 		{
-			label: "Stash",
+			label: t("switchAway.stash"),
 			value: "stash",
 			selectable: true,
 		},
 		{
-			label: "Bring to Workspace",
+			label: t("switchAway.bring"),
 			value: "bring-to-workspace",
 			selectable: !conflicts, // TODO: Reactivity??
 		},
@@ -78,14 +79,13 @@
 
 			<div class="switchrepo__content" data-testid={TestId.NotOnGitButlerBranchView}>
 				<p class="switchrepo__title text-18 text-body text-bold">
-					You've switched away from <span class="code-string"> gitbutler/workspace </span>
+					{t("switchAway.title")} <span class="code-string"> gitbutler/workspace </span>
 				</p>
 
 				<p class="switchrepo__message text-13 text-body">
-					Due to GitButler managing multiple virtual branches, you cannot switch back and forth
-					between git branches and virtual branches easily.
+					{t("switchAway.help")}
 					<Link href="https://docs.gitbutler.com/features/branch-management/integration-branch">
-						Learn more
+						{t("git.learnMore")}
 					</Link>
 				</p>
 
@@ -93,7 +93,7 @@
 					<div class="switchrepo__uncommited-changes">
 						<div class="switchrepo__uncommited-changes__section">
 							<p class="switchrepo__label text-13 text-body text-bold">
-								You have uncommitted changes:
+								{t("switchAway.uncommitted")}
 							</p>
 							<div class="switchrepo__file-list">
 								{#each uncommittedChanges as change, i}
@@ -106,7 +106,7 @@
 							</div>
 							{#if conflicts}
 								<p class="switchrepo__label text-13 text-body clr-text-2">
-									Some files can’t be applied due to conflicts:
+									{t("switchAway.conflicts")}
 								</p>
 								<div class="switchrepo__file-list">
 									<ReduxResult result={mode.result} {projectId}>
@@ -117,7 +117,7 @@
 														filePath={path}
 														clickable={false}
 														conflicted
-														conflictHint="Resolve to apply"
+														conflictHint={t("switchAway.resolveHint")}
 														isLast={i === (mode.subject.worktreeConflicts?.length ?? 0) - 1}
 													/>
 												{/each}
@@ -131,7 +131,7 @@
 						<hr class="switchrepo__divider" />
 
 						<p class="switchrepo__label text-13 text-body text-bold">
-							What should we do with your uncommitted changes?
+							{t("switchAway.question")}
 						</p>
 
 						<div class="switchrepo__handling-options">
@@ -161,7 +161,7 @@
 						loading={targetBranchSwitch.current.isLoading}
 						action={initSwithToWorkspace}
 					>
-						Switch back
+						{t("switchAway.action")}
 					</AsyncButton>
 				</div>
 			</div>

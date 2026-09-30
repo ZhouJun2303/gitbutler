@@ -1,11 +1,12 @@
 <script lang="ts">
 	import CommitFailedFileEntry from "$components/commit/CommitFailedFileEntry.svelte";
 	import AppScrollableContainer from "$components/shared/AppScrollableContainer.svelte";
-	import { readableRejectionReason } from "$lib/stacks/stackEndpoints";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { REJECTTION_REASONS } from "$lib/stacks/stackService.svelte";
 	import { type RejectionReason } from "$lib/state/uiState.svelte";
 	import { Icon, ModalHeader, TestId, Tooltip } from "@gitbutler/ui-svelte";
 	import { untrack } from "svelte";
+	import type { MessageKey } from "$lib/i18n/messages";
 	import type { CommitFailedModalState } from "$lib/state/uiState.svelte";
 
 	type Props = {
@@ -15,9 +16,33 @@
 
 	const { data, oncloseclick }: Props = $props();
 
+	function rejectionKey(reason: RejectionReason): MessageKey {
+		switch (reason) {
+			case "cherryPickMergeConflict":
+				return "commitFail.cherryPick";
+			case "noEffectiveChanges":
+				return "commitFail.noEffective";
+			case "workspaceMergeConflict":
+				return "commitFail.workspace";
+			case "workspaceMergeConflictOfUnrelatedFile":
+				return "commitFail.unrelated";
+			case "worktreeFileMissingForObjectConversion":
+				return "commitFail.missingFile";
+			case "fileToLargeOrBinary":
+				return "commitFail.tooLarge";
+			case "pathNotFoundInBaseTree":
+				return "commitFail.pathMissing";
+			case "unsupportedDirectoryEntry":
+				return "commitFail.badDir";
+			case "unsupportedTreeEntry":
+				return "commitFail.badTree";
+			case "missingDiffSpecAssociation":
+				return "commitFail.missingSpec";
+		}
+	}
+
 	type ReasonGroup = {
 		reason: RejectionReason;
-		reasonReadable: string;
 		paths: string[];
 	};
 
@@ -35,7 +60,7 @@
 		for (const reason of REJECTTION_REASONS) {
 			const paths = grouped[reason];
 			if (!paths) continue;
-			result.push({ reason, reasonReadable: readableRejectionReason(reason), paths });
+			result.push({ reason, paths });
 		}
 
 		return result;
@@ -53,7 +78,7 @@
 		closeButton
 		{oncloseclick}
 		closeButtonTestId={TestId.GlobalModalActionButton}
-		>{data.newCommitId ? "Some changes were not committed" : "Failed to create commit"}</ModalHeader
+		>{data.newCommitId ? t("commitFail.partialTitle") : t("commitFail.failedTitle")}</ModalHeader
 	>
 	<AppScrollableContainer
 		onscrollTop={(visible) => {
@@ -63,22 +88,24 @@
 		<div class="commit-failed__content">
 			<div class="text-13 commit-failed__description">
 				{#if data.newCommitId}
-					Commit <i class="commit-failed__text-icon"><Icon name="commit" /></i>
-					<Tooltip text={data.commitTitle ? data.commitTitle : "No commit title provided"}
+					{t("commitFail.createdBefore")}
+					<i class="commit-failed__text-icon"><Icon name="commit" /></i>
+					<Tooltip text={data.commitTitle ? data.commitTitle : t("commitFail.noTitle")}
 						><span class="h-dotted-underline text-semibold">{data.newCommitId.substring(0, 7)}</span
 						></Tooltip
-					> was created, but some changes weren't fully committed:
+					>
+					{t("commitFail.createdAfter")}
 				{:else}
-					Commit could not be created because of the following reasons:
+					{t("commitFail.notCreated")}
 				{/if}
 			</div>
 
 			<div class="commit-failed__reasons">
-				{#each groupedData as { reason, paths, reasonReadable } (reason)}
+				{#each groupedData as { reason, paths } (reason)}
 					<hr class="commit-failed__reasons-divider" />
 
 					<p class="text-13">
-						Cause: <span class="text-bold">{reasonReadable}</span>
+						{t("commitFail.cause")} <span class="text-bold">{t(rejectionKey(reason))}</span>
 					</p>
 
 					<div class="commit-failed__reason-file-list">

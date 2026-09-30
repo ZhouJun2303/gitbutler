@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
 	import { MergeMethod } from "$lib/forge/interface/types";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { persisted, type Persisted } from "@gitbutler/shared/persisted";
 
@@ -107,7 +108,7 @@
 		{#if onSetDraft}
 			<ContextMenuSection>
 				<ContextMenuItem
-					label={isDraft ? "Ready for review" : "Convert to draft"}
+					label={isDraft ? t("review.ready") : t("review.toDraft")}
 					onclick={async () => {
 						dropDown?.close();
 						loading = true;

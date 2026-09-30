@@ -36,7 +36,11 @@
 	let anthropicKeyOption: KeyOption | undefined = $state();
 	let openAIKey: string | undefined = $state();
 	let openAICustomEndpoint: string | undefined = $state();
-	let openAIModelName: OpenAIModelName | undefined = $state();
+	const customOpenAIModel = "custom";
+
+	let openAIModelName: string | undefined = $state();
+	let openAIModelChoice: string | undefined = $state();
+	let openAICustomModelDraft = $state("");
 	let anthropicKey: string | undefined = $state();
 	let anthropicModelName: AnthropicModelName | undefined = $state();
 	let diffLengthLimit: number | undefined = $state();
@@ -62,6 +66,8 @@
 
 		openAIKeyOption = await aiService.getOpenAIKeyOption();
 		openAIModelName = await aiService.getOpenAIModelName();
+		openAIModelChoice = openAIModelChoiceFor(openAIModelName);
+		openAICustomModelDraft = isPresetOpenAIModel(openAIModelName) ? "" : (openAIModelName ?? "");
 		openAIKey = await aiService.getOpenAIKey();
 		openAICustomEndpoint = await aiService.getOpenAICustomEndpoint();
 
@@ -97,6 +103,25 @@
 		},
 	]);
 
+	const openAIPresetModels = Object.values(OpenAIModelName);
+
+	function isPresetOpenAIModel(model: string | undefined): model is OpenAIModelName {
+		return !!model && openAIPresetModels.includes(model as OpenAIModelName);
+	}
+
+	function openAIModelChoiceFor(model: string | undefined) {
+		return isPresetOpenAIModel(model) ? model : customOpenAIModel;
+	}
+
+	function selectOpenAIModel(value: string) {
+		openAIModelChoice = value;
+		if (value === customOpenAIModel) {
+			openAICustomModelDraft = isPresetOpenAIModel(openAIModelName) ? "" : (openAIModelName ?? "");
+			return;
+		}
+		openAIModelName = value;
+	}
+
 	const openAIModelOptions = $derived([
 		{
 			label: t("ai.gpt54"),
@@ -109,6 +134,10 @@
 		{
 			label: t("ai.gpt54Nano"),
 			value: OpenAIModelName.GPT54Nano,
+		},
+		{
+			label: t("ai.customModel"),
+			value: customOpenAIModel,
 		},
 	]);
 
@@ -240,20 +269,30 @@
 					/>
 
 					<Select
-						value={openAIModelName}
+						value={openAIModelChoice}
 						options={openAIModelOptions}
 						label={t("ai.modelVersion")}
 						wide
-						onselect={(value) => {
-							openAIModelName = value as OpenAIModelName;
-						}}
+						onselect={selectOpenAIModel}
 					>
 						{#snippet itemSnippet({ item, highlighted })}
-							<SelectItem selected={item.value === openAIModelName} {highlighted}>
+							<SelectItem selected={item.value === openAIModelChoice} {highlighted}>
 								{item.label}
 							</SelectItem>
 						{/snippet}
 					</Select>
+
+					{#if openAIModelChoice === customOpenAIModel}
+						<Textbox
+							label={t("ai.modelName")}
+							bind:value={openAICustomModelDraft}
+							placeholder="gpt-4.1"
+							oninput={(value: string) => {
+								const model = value.trim();
+								if (model) openAIModelName = model;
+							}}
+						/>
+					{/if}
 
 					<Textbox
 						label={t("ai.customEndpoint")}

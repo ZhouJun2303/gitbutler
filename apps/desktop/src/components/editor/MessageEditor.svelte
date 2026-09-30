@@ -165,7 +165,7 @@
 
 		if (failed.length > 0) {
 			console.error("File upload failed", failed);
-			showError("File upload failed", failed.map((result) => result.reason).join(", "));
+			showError(t("upload.failed"), failed.map((result) => result.reason).join(", "));
 		}
 
 		allowUploadOnce = false;
@@ -259,7 +259,7 @@
 
 <Modal
 	type="warning"
-	title="Off to the cloud it goes!"
+	title={t("upload.title")}
 	width="small"
 	bind:this={uploadConfirmationModal}
 	onSubmit={async (close) => {
@@ -280,18 +280,17 @@
 		close();
 	}}
 >
-	Your file will be stored in GitButler’s digital vault, safe and sound. We promise it’s secure, so
-	feel free to share the link however you like 🔐
+	{t("upload.body")}
 	{#snippet controls(close)}
 		<div class="modal-footer">
 			<div class="flex flex-1">
 				<label for="dont-show-again" class="modal-footer__checkbox">
 					<Checkbox name="dont-show-again" small bind:checked={$doNotShowUploadWarning} />
-					<span class="text-12"> Don’t show again</span>
+					<span class="text-12">{t("upload.dontShow")}</span>
 				</label>
 			</div>
-			<Button kind="outline" onclick={close}>Cancel</Button>
-			<Button style="pop" type="submit">Yes, upload!</Button>
+			<Button kind="outline" onclick={close}>{t("general.cancel")}</Button>
+			<Button style="pop" type="submit">{t("upload.yes")}</Button>
 		</div>
 	{/snippet}
 </Modal>

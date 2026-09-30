@@ -1,5 +1,6 @@
 <script lang="ts">
 	import BranchHeaderIcon from "$components/branch/BranchHeaderIcon.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Avatar, Badge, ScrollableContainer } from "@gitbutler/ui-svelte";
 	import { getTimeAgo } from "@gitbutler/ui-svelte/utils/timeAgo";
 	import type { BranchIconName } from "$lib/branches/branchIcon";
@@ -144,7 +145,7 @@
 					<div class="graph-content">
 						{#if row.content.subject === ""}
 							<div class="graph-subject text-13 text-semibold truncate clr-text-3">
-								No commit message
+								{t("diff.noMessage")}
 							</div>
 						{:else}
 							<div class="graph-subject text-13 text-semibold truncate">{row.content.subject}</div>
@@ -170,7 +171,7 @@
 							{/if}
 							{#if row.content.hasConflicts}
 								<span class="metadata-separator">•</span>
-								<Badge style="danger" kind="soft">Conflict</Badge>
+								<Badge style="danger" kind="soft">{t("branchDetails.conflict")}</Badge>
 							{/if}
 						</div>
 					</div>

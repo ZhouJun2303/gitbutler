@@ -2,6 +2,7 @@ import { SilentError } from "$lib/error/error";
 import { isNormalizedError, normalizedErrorToException } from "$lib/error/normalizedError";
 import { parseError } from "$lib/error/parser";
 import { showError } from "$lib/error/showError";
+import { t } from "$lib/i18n/locale.svelte";
 import { captureException } from "@sentry/sveltekit";
 
 // Lazy-import logErrorToFile to avoid circular dependency with backend/.
@@ -91,7 +92,7 @@ export function logError(error: unknown, options?: LogErrorOptions) {
 			} else {
 				// `showError` captures to PostHog and Sentry itself, so the
 				// toast pipeline and the telemetry stay in sync.
-				showError("Unhandled exception", error);
+				showError(t("error.unhandled"), error);
 			}
 		}
 

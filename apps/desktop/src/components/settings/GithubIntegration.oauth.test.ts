@@ -2,6 +2,7 @@ import GithubIntegration from "$components/settings/GithubIntegration.svelte";
 import { CLIPBOARD_SERVICE } from "$lib/backend/clipboard";
 import { URL_SERVICE } from "$lib/backend/url";
 import { GITHUB_USER_SERVICE } from "$lib/forge/github/githubUserService.svelte";
+import { t } from "$lib/i18n/locale.svelte";
 import { OnboardingEvent, POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
 import { chipToasts } from "@gitbutler/ui-svelte";
 import { render, screen, waitFor } from "@testing-library/svelte";
@@ -81,7 +82,7 @@ afterEach(() => vi.restoreAllMocks());
 async function driveDeviceFlowToStatusCheck() {
 	const user = userEvent.setup();
 	await user.click(screen.getByRole("button", { name: /add account/i }));
-	await user.click(await screen.findByText("Authorize GitHub Account"));
+	await user.click(await screen.findByText(t("integration.authorizeGithub")));
 	await user.click(await screen.findByRole("button", { name: /copy to clipboard/i }));
 	await user.click(await screen.findByRole("button", { name: /open github activation page/i }));
 	// The status button is revealed 500ms after the activation page is opened.
@@ -152,7 +153,7 @@ describe("GithubIntegration device OAuth failure", () => {
 		const user = userEvent.setup();
 
 		await user.click(screen.getByRole("button", { name: /add account/i }));
-		await user.click(await screen.findByText("Authorize GitHub Account"));
+		await user.click(await screen.findByText(t("integration.authorizeGithub")));
 
 		const payload = {
 			name: "GitHub OAuth failed",
@@ -192,7 +193,7 @@ describe("GithubIntegration device OAuth failure", () => {
 		await driveDeviceFlowToStatusCheck();
 
 		await waitFor(() => expectFlowClosed());
-		expect(successToast).toHaveBeenCalledWith("GitHub authenticated");
+		expect(successToast).toHaveBeenCalledWith(t("integration.githubAuthed"));
 		expect(errorToast).not.toHaveBeenCalled();
 		expect(posthog.captureOnboarding).toHaveBeenCalledTimes(1);
 		expect(posthog.captureOnboarding).toHaveBeenCalledWith(OnboardingEvent.GitHubInitiateOAuth);

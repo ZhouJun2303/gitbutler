@@ -1,5 +1,6 @@
 import { showError } from "$lib/error/showError";
 import { parseRemoteUrl } from "$lib/git/gitUrl";
+import { t } from "$lib/i18n/locale.svelte";
 import { InjectionToken } from "@gitbutler/core/context";
 import type { BackendApi } from "$lib/state/backendApi";
 import type { BaseBranch } from "@gitbutler/but-sdk";
@@ -82,7 +83,7 @@ export default class BaseBranchService {
 				// cargo-build hint for the `Unknown` + cargo message) to the
 				// classifier.
 				if (action === "auto") return;
-				showError("Failed to fetch", error);
+				showError(t("error.fetch"), error);
 			});
 	}
 

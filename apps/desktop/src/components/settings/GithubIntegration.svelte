@@ -6,6 +6,7 @@
 	import { URL_SERVICE } from "$lib/backend/url";
 	import { classifyGitHubDeviceOAuthFailure } from "$lib/error/errorClassification";
 	import { GITHUB_USER_SERVICE } from "$lib/forge/github/githubUserService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { OnboardingEvent, POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
 	import { inject } from "@gitbutler/core/context";
 
@@ -48,7 +49,8 @@
 	// GitHub Enterprise flow state
 	let ghePatInput = $state<string>();
 	let gheHostInput = $state<string>();
-	let ghePatError = $state<string>();
+	let gheTokenInvalid = $state(false);
+	const ghePatError = $derived(gheTokenInvalid ? t("integration.invalidTokenHost") : undefined);
 	let gheHostError = $state<string>();
 
 	function cleanupAuthFlow() {
@@ -68,7 +70,7 @@
 		showingFlow = undefined;
 		ghePatInput = undefined;
 		gheHostInput = undefined;
-		ghePatError = undefined;
+		gheTokenInvalid = false;
 		gheHostError = undefined;
 	}
 
@@ -101,7 +103,7 @@
 		loading = true;
 		try {
 			await githubUserService.checkAuthStatus({ deviceCode });
-			toasts.success("GitHub authenticated");
+			toasts.success(t("integration.githubAuthed"));
 		} catch (err: unknown) {
 			reportOAuthFailure(err);
 		} finally {
@@ -128,7 +130,7 @@
 			cleanupPatFlow();
 		} catch (err: any) {
 			console.error("Failed to store GitHub PAT:", err);
-			patError = "Invalid token or network error";
+			patError = t("integration.invalidToken");
 			posthog.captureOnboarding(OnboardingEvent.GitHubStorePatFailed);
 		}
 	}
@@ -139,7 +141,7 @@
 
 	async function storeGitHubEnterpriseToken() {
 		if (!ghePatInput || !gheHostInput) return;
-		ghePatError = undefined;
+		gheTokenInvalid = false;
 		gheHostError = undefined;
 		try {
 			await storeGhePat({ accessToken: ghePatInput, host: gheHostInput });
@@ -147,7 +149,7 @@
 			cleanupGheFlow();
 		} catch (err: any) {
 			console.error("Failed to store GitHub Enterprise PAT:", err);
-			ghePatError = "Invalid token or host";
+			gheTokenInvalid = true;
 			posthog.captureOnboarding(OnboardingEvent.GitHubStoreGHEPatFailed);
 		}
 	}
@@ -160,12 +162,12 @@
 			{#snippet error()}
 				<CardGroup.Item>
 					{#snippet title()}
-						Failed to load GitHub accounts
+						{t("integration.githubLoadFailed")}
 					{/snippet}
 					<Button
 						style="pop"
 						onclick={deleteAllGitHubAccounts}
-						loading={clearingAllResult.current.isLoading}>Try again</Button
+						loading={clearingAllResult.current.isLoading}>{t("integration.tryAgain")}</Button
 					>
 				</CardGroup.Item>
 			{/snippet}
@@ -189,7 +191,7 @@
 					{/snippet}
 
 					{#snippet caption()}
-						Allows you to create Pull Requests
+						{t("integration.allowsPr")}
 					{/snippet}
 
 					{#snippet actions()}
@@ -212,7 +214,7 @@
 					<div class="step-section">
 						<div class="step-line"></div>
 						<div class="step-section__content">
-							<p class="text-13 text-body">Copy the following verification code:</p>
+							<p class="text-13 text-body">{t("integration.copyCode")}</p>
 
 							<div class="code-wrapper">
 								<span class="text-head-20">
@@ -224,11 +226,11 @@
 									icon="copy"
 									disabled={codeCopied}
 									onclick={() => {
-										clipboardService.write(userCode, { message: "User code copied" });
+										clipboardService.write(userCode, { message: t("integration.codeCopied") });
 										codeCopied = true;
 									}}
 								>
-									Copy to Clipboard
+									{t("integration.copyClipboard")}
 								</Button>
 							</div>
 						</div>
@@ -239,7 +241,7 @@
 							<div class="step-line step-line-default"></div>
 							<div class="step-section__content">
 								<p class="text-13 text-body">
-									Navigate to the GitHub activation page and paste the code you copied.
+									{t("integration.pasteCode")}
 								</p>
 								<Button
 									style="pop"
@@ -255,7 +257,7 @@
 										}, 500);
 									}}
 								>
-									Open GitHub activation page
+									{t("integration.openActivation")}
 								</Button>
 							</div>
 						</div>
@@ -273,7 +275,7 @@
 										await gitHubOauthCheckStatus(deviceCode);
 									}}
 								>
-									Check the status
+									{t("integration.checkStatus")}
 								</Button>
 							</div>
 						</div>
@@ -287,7 +289,7 @@
 		<CardGroup>
 			<CardGroup.Item>
 				{#snippet title()}
-					Add Personal Access Token
+					{t("integration.addPat")}
 				{/snippet}
 
 				<Textbox
@@ -301,14 +303,15 @@
 			</CardGroup.Item>
 			<CardGroup.Item>
 				<div class="flex justify-end gap-6">
-					<Button style="gray" kind="outline" onclick={cleanupPatFlow}>Cancel</Button>
+					<Button style="gray" kind="outline" onclick={cleanupPatFlow}>{t("general.cancel")}</Button
+					>
 					<Button
 						style="pop"
 						disabled={!patInput}
 						loading={storePatResult.current.isLoading}
 						onclick={storePersonalAccessToken}
 					>
-						Add account
+						{t("integration.addAccount")}
 					</Button>
 				</div>
 			</CardGroup.Item>
@@ -317,27 +320,27 @@
 		<CardGroup>
 			<CardGroup.Item>
 				{#snippet title()}
-					Add GitHub Enterprise Account
+					{t("integration.addGhe")}
 				{/snippet}
 
 				{#snippet caption()}
-					To connect to your GitHub Enterprise API, allow-list it in the app’s CSP settings.
+					{t("integration.gheCsp")}
 					<br />
-					See <Link href="https://docs.gitbutler.com/troubleshooting/custom-csp"
-						>docs for details</Link
+					<Link href="https://docs.gitbutler.com/troubleshooting/custom-csp"
+						>{t("integration.docsDetails")}</Link
 					>
 				{/snippet}
 
 				<Textbox
-					label="API Base URL"
+					label={t("integration.apiBase")}
 					size="large"
 					value={gheHostInput}
 					oninput={(value) => (gheHostInput = value)}
-					helperText="This should be the root URL of the API. For example, if your GitHub Enterprise Server's hostname is github.acme-inc.com, then set the base URL to https://github.acme-inc.com/api/v3"
+					helperText={t("integration.githubApiHelp")}
 					error={gheHostError}
 				/>
 				<Textbox
-					label="Personal Access Token"
+					label={t("forge.pat")}
 					placeholder="ghp_************************"
 					size="large"
 					type="password"
@@ -348,14 +351,15 @@
 			</CardGroup.Item>
 			<CardGroup.Item>
 				<div class="flex justify-end gap-6">
-					<Button style="gray" kind="outline" onclick={cleanupGheFlow}>Cancel</Button>
+					<Button style="gray" kind="outline" onclick={cleanupGheFlow}>{t("general.cancel")}</Button
+					>
 					<Button
 						style="pop"
 						disabled={!gheHostInput || !ghePatInput}
 						loading={storeGhePatResult.current.isLoading}
 						onclick={storeGitHubEnterpriseToken}
 					>
-						Add account
+						{t("integration.addAccount")}
 					</Button>
 				</div>
 			</CardGroup.Item>
@@ -373,10 +377,10 @@
 		disabled={showingFlow !== undefined}
 		loading={storePatResult.current.isLoading || storeGhePatResult.current.isLoading}
 		menuItems={[
-			{ label: "Authorize GitHub Account", icon: "link", onclick: gitHubStartOauth },
-			{ label: "Add Personal Access Token", icon: "lock-auth", onclick: startPatFlow },
+			{ label: t("integration.authorizeGithub"), icon: "link", onclick: gitHubStartOauth },
+			{ label: t("integration.addPat"), icon: "lock-auth", onclick: startPatFlow },
 			{
-				label: "Add GitHub Enterprise Account",
+				label: t("integration.addGhe"),
 				icon: "factory",
 				onclick: startGitHubEnterpriseFlow,
 			},

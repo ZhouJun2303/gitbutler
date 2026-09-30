@@ -253,8 +253,8 @@
 											const absPath = await backend.joinPath(projectPath, itemPath);
 
 											await clipboardService.write(absPath, {
-												message: "Absolute path copied",
-												errorMessage: "Failed to copy absolute path",
+												message: t("copy.abs"),
+												errorMessage: t("copy.absFailed"),
 											});
 										}
 									}}
@@ -264,8 +264,8 @@
 									onclick={async () => {
 										menuOpen = false;
 										await clipboardService.write(itemPath, {
-											message: "Relative path copied",
-											errorMessage: "Failed to copy relative path",
+											message: t("copy.rel"),
+											errorMessage: t("copy.relFailed"),
 										});
 									}}
 								/>

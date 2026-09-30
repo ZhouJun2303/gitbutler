@@ -3,6 +3,7 @@
 	import { BACKEND } from "$lib/backend";
 	import { FILE_SERVICE } from "$lib/files/fileService";
 	import { GIT_SERVICE } from "$lib/git/gitService";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { SHORTCUT_SERVICE } from "$lib/shortcuts/shortcutService";
 	import { DATA_SHARING_SERVICE } from "$lib/support/dataSharing";
 	import { USER_SERVICE } from "$lib/user/userService.svelte";
@@ -112,10 +113,10 @@
 			{
 				loading:
 					!sendLogs && !sendProjectRepository && !sendGraph
-						? "Sending feedback..."
-						: "Uploading data...",
-				success: "Feedback sent successfully",
-				error: "Failed to send feedback",
+						? t("share.sending")
+						: t("share.uploading"),
+				success: t("share.sent"),
+				error: t("share.failed"),
 			},
 		);
 		close();
@@ -155,21 +156,16 @@
 	$effect(() => shortcutService.on("share-debug-info", () => show()));
 </script>
 
-<Modal
-	bind:this={modal}
-	title="Share debug data with GitButler team for review"
-	onSubmit={async () => await submit()}
->
+<Modal bind:this={modal} title={t("share.title")} onSubmit={async () => await submit()}>
 	<div class="content-wrapper">
 		<p class="content-wrapper__help-text text-13 text-body">
-			If you are having trouble, please share your project and logs with the GitButler team. We will
-			review it for you and help identify how we can help resolve the issue.
+			{t("share.help")}
 		</p>
 
 		{#if !userService.user}
 			<EmailTextbox
-				label="Email"
-				placeholder="Provide an email so that we can get back to you"
+				label={t("share.email")}
+				placeholder={t("share.emailHelp")}
 				bind:value={emailInputValue}
 				required
 				autocomplete={false}
@@ -180,8 +176,8 @@
 		{/if}
 
 		<Textarea
-			label="Comments"
-			placeholder="Provide any steps necessary to reproduce the problem."
+			label={t("share.comments")}
+			placeholder={t("share.commentsHelp")}
 			spellcheck
 			id="comments"
 			minRows={6}
@@ -190,27 +186,26 @@
 		/>
 
 		<div class="content-wrapper__section">
-			<span class="text-16 text-semibold"> Share logs </span>
+			<span class="text-16 text-semibold">{t("share.logsTitle")}</span>
 			<span class="content-wrapper__help-text text-13 text-body">
-				We personally ensure all information you share with us will be reviewed internally only and
-				discarded post-resolution
+				{t("share.logsHelp")}
 			</span>
 		</div>
 
 		<div class="content-wrapper__checkbox-group">
 			<div class="content-wrapper__checkbox">
 				<Checkbox name="logs" bind:checked={sendLogs} />
-				<label class="text-13" for="logs">Share logs</label>
+				<label class="text-13" for="logs">{t("share.logs")}</label>
 			</div>
 
 			{#if projectId}
 				<div class="content-wrapper__checkbox">
 					<Checkbox name="project-repository" bind:checked={sendProjectRepository} />
-					<label class="text-13" for="project-repository">Share project repository</label>
+					<label class="text-13" for="project-repository">{t("share.repo")}</label>
 				</div>
 				<div class="content-wrapper__checkbox">
 					<Checkbox name="graph" bind:checked={sendGraph} />
-					<label class="text-13" for="graph">Share anonymized commit-graph</label>
+					<label class="text-13" for="graph">{t("share.graph")}</label>
 				</div>
 			{/if}
 		</div>
@@ -218,9 +213,9 @@
 
 	<!-- Use our own close function -->
 	{#snippet controls()}
-		<Button kind="outline" type="reset" onclick={close}>Close</Button>
+		<Button kind="outline" type="reset" onclick={close}>{t("share.close")}</Button>
 		<Button disabled={!sendLogs && !sendProjectRepository && !sendGraph} style="pop" type="submit"
-			>Share with GitButler</Button
+			>{t("share.send")}</Button
 		>
 	{/snippet}
 </Modal>

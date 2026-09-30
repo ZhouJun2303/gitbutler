@@ -3,6 +3,7 @@
 	import CommitTitle from "$components/commit/CommitTitle.svelte";
 	import { URL_SERVICE } from "$lib/backend/url";
 	import { type CommitStatusType } from "$lib/commits/commit";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Avatar, Icon, TestId } from "@gitbutler/ui-svelte";
 	import { focusable } from "@gitbutler/ui-svelte/focus/focusable";
@@ -184,7 +185,7 @@
 							role="button"
 							tabindex="0"
 							onclick={openGerritReview}
-							title="Open Gerrit review #{reviewId}"
+							title={t("list.openGerrit", { reviewId })}
 						>
 							<span class="text-11 text-semibold">{reviewId}</span>
 						</div>

@@ -18,6 +18,7 @@
 		onDragOver,
 	} from "$lib/dragging/reordering";
 	import { WorkspaceAutoPanner } from "$lib/dragging/workspaceAutoPanner";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { branchesPath } from "$lib/routes/routes.svelte";
 	import { type SelectionId } from "$lib/selection/key";
 	import { getStackBranchNames, type Stack } from "$lib/stacks/stack";
@@ -267,7 +268,7 @@
 							onUnfold={() => unfoldStack(stack.id)}
 						/>
 					{:else}
-						<ErrorBoundary title="Something went wrong in this stack">
+						<ErrorBoundary title={t("error.stack")}>
 							<StackView
 								{projectId}
 								{stack}
@@ -297,35 +298,35 @@
 			>
 				{#snippet title()}
 					{#if stacks.length === 0}
-						No branches in Workspace
+						{t("multi.emptyTitle")}
 					{/if}
 				{/snippet}
 				{#snippet description()}
 					{#if stacks.length === 0}
-						Drop files to start a branch,
+						{t("multi.dropStart")}
 						<br />
-						apply from the
+						{t("multi.applyFrom")}
 						<a
 							class="pointer-events underline-dotted clr-text-2 link-hover-2"
-							aria-label="Branches view"
-							href={branchesPath(projectId)}>branches view</a
+							aria-label={t("multi.branchesView")}
+							href={branchesPath(projectId)}>{t("multi.branchesView")}</a
 						>
 						↗
 						<br />
-						or
+						{t("multi.or")}
 						<button
 							type="button"
 							class="underline-dotted pointer-events clr-text-2 link-hover-2"
-							onclick={() => createBranchModal?.show()}>create a new branch</button
+							onclick={() => createBranchModal?.show()}>{t("multi.createBranch")}</button
 						> +
 					{:else}
-						Drop files to start a branch,
+						{t("multi.dropStart")}
 						<br />
-						or
+						{t("multi.or")}
 						<button
 							type="button"
 							class="underline-dotted pointer-events clr-text-2 link-hover-2"
-							onclick={() => createBranchModal?.show()}>create a new branch</button
+							onclick={() => createBranchModal?.show()}>{t("multi.createBranch")}</button
 						> +
 					{/if}
 				{/snippet}

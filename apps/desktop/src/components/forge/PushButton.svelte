@@ -246,12 +246,15 @@
 	}}
 >
 	<p class="description">
-		Your force push was blocked because the remote branch contains <span
-			class="text-bold text-nowrap"
-			>{upstreamCommits?.length === 1 ? "1 commit" : `${upstreamCommits?.length} commits`}</span
+		{t("push.blockedBefore")}
+		<span class="text-bold text-nowrap"
+			>{upstreamCommits?.length === 1
+				? t("push.oneCommit")
+				: t("push.commitCount", { count: upstreamCommits?.length ?? 0 })}</span
 		>
-		your local branch doesn’t include. To prevent overwriting history,
-		<span class="text-bold">cancel and pull & integrate</span> the changes.
+		{t("push.blockedMiddle")}
+		<span class="text-bold">{t("push.cancelPull")}</span>
+		{t("push.blockedEnd")}
 	</p>
 	{#if upstreamCommits}
 		<div class="scroll-wrap">

@@ -5,6 +5,7 @@
 	import ProjectSwitcher from "$components/shared/ProjectSwitcher.svelte";
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import notFoundSvg from "$lib/assets/illustrations/not-found.svg?raw";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, InfoMessage, type MessageStyle, Spacer, TestId } from "@gitbutler/ui-svelte";
@@ -46,8 +47,8 @@
 
 	function getDeletionStatus(repoName: string, deleteSucceeded: boolean): DeletionStatus {
 		return deleteSucceeded
-			? { message: `Project "${repoName}" successfully deleted`, style: "success" }
-			: { message: `Failed to delete "${repoName}" project`, style: "danger" };
+			? { message: t("missing.deleted", { name: repoName }), style: "success" }
+			: { message: t("missing.deleteFailed", { name: repoName }), style: "danger" };
 	}
 </script>
 
@@ -58,25 +59,25 @@
 				{#if deleteSucceeded === undefined}
 					<div class="text-content">
 						<h2 class="title-text text-18 text-body text-bold">
-							Can’t find "{project.title}"
+							{t("missing.title", { name: project.title })}
 						</h2>
 
 						<p class="description-text text-13 text-body">
-							Sorry, we can't find the project you're looking for.
+							{t("missing.sorry")}
 							<br />
-							It might have been removed or doesn't exist.
+							{t("missing.removed")}
 							<button type="button" class="check-again-btn" onclick={() => location.reload()}
-								>Click here</button
+								>{t("missing.clickHere")}</button
 							>
-							to check again.
+							{t("missing.checkAgain")}
 							<br />
-							The current project path: <span class="code-string">{project.path}</span>
+							{t("missing.path")} <span class="code-string">{project.path}</span>
 						</p>
 					</div>
 
 					<div class="button-container">
 						<Button type="button" style="pop" onclick={async () => await locate(projectId)}
-							>Locate project…</Button
+							>{t("missing.locate")}</Button
 						>
 						<RemoveProjectButton
 							noModal

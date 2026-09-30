@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROMPT_SERVICE } from "$lib/prompt/promptService";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, Modal, Textbox } from "@gitbutler/ui-svelte";
@@ -55,7 +56,7 @@
 <Modal
 	bind:this={modal}
 	width="small"
-	title="Git needs input"
+	title={t("gitPrompt.title")}
 	onClickOutside={cancel}
 	onSubmit={submit}
 >
@@ -70,9 +71,11 @@
 
 	{#snippet controls()}
 		<Button kind="outline" type="reset" disabled={loading} onclick={handleCancelButton}
-			>Cancel</Button
+			>{t("general.cancel")}</Button
 		>
-		<Button style="pop" type="submit" grow disabled={!!$error || loading} {loading}>Submit</Button>
+		<Button style="pop" type="submit" grow disabled={!!$error || loading} {loading}
+			>{t("gitPrompt.submit")}</Button
+		>
 	{/snippet}
 </Modal>
 

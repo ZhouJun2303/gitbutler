@@ -6,6 +6,7 @@
 
 <script lang="ts" generics="A, B extends string | undefined, C extends string | undefined">
 	import { isNormalizedError } from "$lib/error/normalizedError";
+	import { t } from "$lib/i18n/locale.svelte";
 
 	import { Icon, InfoMessage } from "@gitbutler/ui-svelte";
 	import { QueryStatus } from "@reduxjs/toolkit/query";
@@ -77,7 +78,7 @@
 					{error.name}
 				{/snippet}
 				{#snippet content()}
-					An asynchronous operation failed.
+					{t("error.asyncFailed")}
 				{/snippet}
 			</InfoMessage>
 		</div>

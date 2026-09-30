@@ -307,7 +307,7 @@
 			<div class="text-12 pr-row">
 				<div class="factoid">
 					{#if pr.reviewers.length > 0}
-						<span class="label">Reviewers:</span>
+						<span class="label">{t("list.reviewers")}</span>
 						<div class="avatar-group-container">
 							<AvatarGroup
 								avatars={pr.reviewers.map((r) => ({
@@ -317,7 +317,7 @@
 							/>
 						</div>
 					{:else}
-						<span class="label italic">No reviewers</span>
+						<span class="label italic">{t("list.noReviewers")}</span>
 					{/if}
 				</div>
 				<span class="separator">•</span>

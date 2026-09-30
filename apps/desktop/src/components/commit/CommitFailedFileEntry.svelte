@@ -1,6 +1,7 @@
 <script lang="ts">
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import { DEPENDENCY_SERVICE } from "$lib/dependencies/dependencyService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { UI_STATE, type RejectionReason } from "$lib/state/uiState.svelte";
 	import { inject } from "@gitbutler/core/context";
@@ -39,12 +40,13 @@
 
 			<div class="commit-failed__file-entry__header__unfold-action">
 				<span class="text-12 text-semibold"
-					>{isFolded ? "Show" : "Hide"}
-					hunks ({#if fileDependencies.response}
-						{fileDependencies.response.dependencies.length}
-					{:else}
-						0
-					{/if})</span
+					>{isFolded
+						? t("commitFail.showHunks", {
+								count: fileDependencies.response?.dependencies.length ?? 0,
+							})
+						: t("commitFail.hideHunks", {
+								count: fileDependencies.response?.dependencies.length ?? 0,
+							})}</span
 				>
 
 				<Icon name={isFolded ? "chevron-down" : "chevron-up"} />
@@ -75,7 +77,7 @@
 							<div class="text-12 commit-failed__file-entry__dependency-locks">
 								<div class="commit-failed__file-entry__dependency-locks__label">
 									<Icon name="lock" color="var(--fill-warn-bg)" />
-									<span class="clr-text-2">Depends on:</span>
+									<span class="clr-text-2">{t("commitFail.dependsOn")}</span>
 								</div>
 								<div class="commit-failed__file-entry__dependency-locks__content">
 									{#each dependency.locks as lock}
@@ -85,16 +87,17 @@
 											{@const commitBranch = branch?.find((b) =>
 												b.commits.some((c) => c.id === lock.commitId),
 											)}
-											{@const branchName = commitBranch?.refName?.displayName || "Unknown branch"}
+											{@const branchName =
+												commitBranch?.refName?.displayName || t("commitFail.unknownBranch")}
 											{@const commitMessage = commitBranch?.commits.find(
 												(c) => c.id === lock.commitId,
 											)}
 											{@const commitTitle =
-												commitMessage?.message.split("\n")[0] || "No commit message provided"}
+												commitMessage?.message.split("\n")[0] || t("commitFail.noMessage")}
 											<p class="text-body commit-failed__file-entry-dependency-lock">
 												<i class="commit-failed__text-icon"><Icon name="branch" /></i>
 												<span class="text-semibold">{branchName}</span>
-												<i class="clr-text-2">in commit</i>
+												<i class="clr-text-2">{t("commitFail.inCommit")}</i>
 												<i class="commit-failed__text-icon"><Icon name="commit" /></i>
 												<Tooltip text={commitTitle}>
 													<span class="commit-failed__tooltip-text text-semibold h-dotted-underline"
@@ -105,8 +108,8 @@
 										{:else}
 											<p class="text-body commit-failed__file-entry-dependency-lock">
 												<i class="commit-failed__text-icon"><Icon name="branch" /></i>
-												<span class="text-semibold">Unknown stack</span>
-												<i class="clr-text-2">in commit</i>
+												<span class="text-semibold">{t("commitFail.unknownStack")}</span>
+												<i class="clr-text-2">{t("commitFail.inCommit")}</i>
 												<i class="commit-failed__text-icon"><Icon name="commit" /></i>
 												<span class="text-semibold">{lock.commitId.substring(0, 7)}</span>
 											</p>

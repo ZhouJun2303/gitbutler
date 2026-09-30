@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { InfoMessage } from "@gitbutler/ui-svelte";
 
 	// Number of events received.
@@ -17,10 +18,10 @@
 	<div class="reload-warning">
 		<InfoMessage style="warning">
 			{#snippet title()}
-				Full reload pending
+				{t("reload.pending")}
 			{/snippet}
 			{#snippet content()}
-				Detected {count} events that require reloading this page.
+				{t("reload.detected", { count })}
 			{/snippet}
 		</InfoMessage>
 	</div>

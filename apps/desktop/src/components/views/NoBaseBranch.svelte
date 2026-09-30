@@ -3,6 +3,7 @@
 	import FullviewLoading from "$components/shared/FullviewLoading.svelte";
 	import ProblemLoadingRepo from "$components/views/ProblemLoadingRepo.svelte";
 	import { BASE_BRANCH_SERVICE } from "$lib/baseBranch/baseBranchService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 
 	const { projectId }: { projectId: string } = $props();
@@ -16,18 +17,10 @@
 {:else if remoteBranchesQuery.result.isSuccess}
 	{@const remoteBranches = remoteBranchesQuery.response}
 	{#if !remoteBranches || remoteBranches.length === 0}
-		<ProblemLoadingRepo
-			{projectId}
-			error="Currently, GitButler requires a remote branch to base its virtual branch work on. To
-						use virtual branches, please push your code to a remote branch to use as a base"
-		/>
+		<ProblemLoadingRepo {projectId} error={t("error.noBase")} />
 	{:else}
 		<ProjectSetup {projectId} {remoteBranches} />
 	{/if}
 {:else if remoteBranchesQuery.result.isError}
-	<ProblemLoadingRepo
-		{projectId}
-		error="Currently, GitButler requires a remote branch to base its virtual branch work on. To
-						use virtual branches, please push your code to a remote branch to use as a base"
-	/>
+	<ProblemLoadingRepo {projectId} error={t("error.noBase")} />
 {/if}

@@ -5,6 +5,7 @@
 	import { parseError } from "$lib/error/parser";
 	import { GIT_SERVICE } from "$lib/git/gitService";
 	import { parseRemoteUrl } from "$lib/git/gitUrl";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { handleAddProjectOutcome } from "$lib/project/project";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { projectPath } from "$lib/routes/routes.svelte";
@@ -22,7 +23,7 @@
 	const backend = inject(BACKEND);
 
 	let loading = $state(false);
-	let errors = $state<{ label: string }[]>([]);
+	let errors = $state<{ label?: string; key?: "clone.bothRequired" }[]>([]);
 	let completed = $state(false);
 	let repositoryUrl = $state("");
 	let targetDirPath = $state("");
@@ -40,7 +41,7 @@
 		const selectedPath = await backend.filePicker({
 			directory: true,
 			recursive: true,
-			title: "Target Clone Directory",
+			title: t("clone.picker"),
 		});
 		if (!selectedPath || !selectedPath[0]) return;
 
@@ -64,7 +65,7 @@
 
 		if (!repositoryUrl || !targetDirPath) {
 			errors.push({
-				label: "You must add both a repository URL and target directory.",
+				key: "clone.bothRequired",
 			});
 			loading = false;
 			return;
@@ -112,31 +113,33 @@
 	}
 </script>
 
-<h1 class="clone-title text-serif-42">Clone a <i>repository</i></h1>
+<h1 class="clone-title text-serif-42">{t("clone.titleA")} <i>{t("clone.titleB")}</i></h1>
 <SettingsSection>
-	<Textbox label="Clone URL" bind:value={repositoryUrl} />
+	<Textbox label={t("clone.url")} bind:value={repositoryUrl} />
 
 	<div class="clone__field repositoryTargetPath">
 		<Textbox
-			label="Where to clone"
+			label={t("clone.where")}
 			bind:value={targetDirPath}
 			placeholder="/Users/tipsy/Documents"
 		/>
-		<Button kind="outline" disabled={loading} onclick={handleCloneTargetSelect}>Choose..</Button>
+		<Button kind="outline" disabled={loading} onclick={handleCloneTargetSelect}
+			>{t("clone.choose")}</Button
+		>
 	</div>
 </SettingsSection>
 
 <Spacer dotted margin={24} />
 
 {#if completed}
-	{@render Notification({ title: "Success", style: "success" })}
+	{@render Notification({ title: t("clone.success"), style: "success" })}
 {/if}
 {#if errors.length}
-	{@render Notification({ title: "Error", items: errors, style: "danger" })}
+	{@render Notification({ title: t("clone.error"), items: errors, style: "danger" })}
 {/if}
 
 <div class="clone__actions">
-	<Button kind="outline" disabled={loading} onclick={handleCancel}>Cancel</Button>
+	<Button kind="outline" disabled={loading} onclick={handleCancel}>{t("general.cancel")}</Button>
 	<Button
 		style="pop"
 		icon={errors.length > 0 ? "refresh" : "chevron-right"}
@@ -145,11 +148,11 @@
 		onclick={cloneRepository}
 	>
 		{#if loading}
-			Cloning..
+			{t("clone.cloning")}
 		{:else if errors.length > 0}
-			Retry clone
+			{t("clone.retry")}
 		{:else}
-			Clone
+			{t("clone.action")}
 		{/if}
 	</Button>
 </div>
@@ -171,7 +174,7 @@
 			{#snippet content()}
 				{#if items && items.length > 0}
 					{#each items as item}
-						<span>{item.label}</span>
+						<span>{item.key ? t(item.key) : item.label}</span>
 					{/each}
 				{/if}
 			{/snippet}

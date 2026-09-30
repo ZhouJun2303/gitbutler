@@ -3,6 +3,7 @@
 	import RangeInput from "$components/RangeInput.svelte";
 	import SkeletonBone from "$components/SkeletonBone.svelte";
 	import { SegmentControl } from "$components/segmentControl";
+	import { uiText } from "$lib/i18n/locale.svelte";
 
 	type Props = {
 		beforeImageUrl?: string | null;
@@ -243,13 +244,13 @@
 			aria-valuemax={100}
 		>
 			<div class="comparison-image comparison-after">
-				<img src={afterImageUrl!} alt="{fileName} (After)" />
+				<img src={afterImageUrl!} alt="{fileName} ({uiText('image.after')})" />
 			</div>
 			<div
 				class="comparison-image comparison-before"
 				style="clip-path: inset(0 {100 - props.controlValue}% 0 0);"
 			>
-				<img src={beforeImageUrl!} alt="{fileName} (Before)" />
+				<img src={beforeImageUrl!} alt="{fileName} ({uiText('image.before')})" />
 			</div>
 			<div class="swipe-handle" style="left: {props.controlValue}%">
 				<div class="swipe-divider"></div>
@@ -264,16 +265,16 @@
 	<div class="comparison-container">
 		<div class="comparison-wrapper checkered-bg" bind:this={comparisonWrapperRef}>
 			<div class="comparison-image comparison-after">
-				<img src={afterImageUrl!} alt="{fileName} (After)" />
+				<img src={afterImageUrl!} alt="{fileName} ({uiText('image.after')})" />
 			</div>
 			<div class="comparison-image comparison-before" style="opacity: {props.controlValue / 100};">
-				<img src={beforeImageUrl!} alt="{fileName} (Before)" />
+				<img src={beforeImageUrl!} alt="{fileName} ({uiText('image.before')})" />
 			</div>
 		</div>
 		<div class="comparison-controls">
-			<Badge style="danger" kind="soft">Before</Badge>
+			<Badge style="danger" kind="soft">{uiText("image.before")}</Badge>
 			<RangeInput min={0} max={100} value={props.controlValue} oninput={props.onValueChange} wide />
-			<Badge style="safe" kind="soft">After</Badge>
+			<Badge style="safe" kind="soft">{uiText("image.after")}</Badge>
 		</div>
 		{@render comparisonFooter()}
 	</div>
@@ -287,9 +288,9 @@
 				selected={viewMode}
 				onselect={(id) => (viewMode = id as ViewMode)}
 			>
-				<SegmentControl.Item id="2-up">2-up</SegmentControl.Item>
-				<SegmentControl.Item id="swipe">Swipe</SegmentControl.Item>
-				<SegmentControl.Item id="onion-skin">Onion Skin</SegmentControl.Item>
+				<SegmentControl.Item id="2-up">{uiText("image.twoUp")}</SegmentControl.Item>
+				<SegmentControl.Item id="swipe">{uiText("image.swipe")}</SegmentControl.Item>
+				<SegmentControl.Item id="onion-skin">{uiText("image.onion")}</SegmentControl.Item>
 			</SegmentControl>
 		</div>
 	{/if}
@@ -308,7 +309,7 @@
 				{#if beforeImageUrl}
 					{@render imagePanel({
 						url: beforeImageUrl,
-						label: afterImageUrl ? "Before" : "Removed",
+						label: afterImageUrl ? uiText("image.before") : uiText("image.removed"),
 						isBefore: true,
 						metadata: beforeImageMetadata,
 					})}
@@ -317,7 +318,7 @@
 				{#if afterImageUrl}
 					{@render imagePanel({
 						url: afterImageUrl,
-						label: beforeImageUrl ? "After" : "Added",
+						label: beforeImageUrl ? uiText("image.after") : uiText("image.added"),
 						metadata: afterImageMetadata,
 					})}
 				{/if}

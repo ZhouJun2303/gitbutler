@@ -4,6 +4,7 @@
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
 	import { PR_SERVICE } from "$lib/forge/prService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Avatar, Link, Markdown, TestId } from "@gitbutler/ui-svelte";
 
@@ -38,18 +39,18 @@
 					<Avatar
 						size="medium"
 						srcUrl={pr.author?.gravatarUrl || ""}
-						username={pr.author?.name || "Unknown Author"}
+						username={pr.author?.name || t("list.unknownAuthor")}
 					/>
 					<div class="pr-request-data__wrapper">
 						<p class="pr-request-data__sentence text-13">
 							<span class="text-bold clr-text-1">
 								{pr.author?.name}
 							</span>
-							wants to merge into
+							{t("list.wantsMerge")}
 							<span class="code-string text-semibold">
 								{pr.targetBranch}
 							</span>
-							from
+							{t("list.from")}
 							<span class="code-string text-semibold">
 								{pr.sourceBranch}
 							</span>
@@ -58,10 +59,10 @@
 						<div class="pr-request-data__details text-12">
 							<PrStatusBadge {pr} />
 							<span class="pr-request-data__divider">•</span>
-							<span>No remote</span>
+							<span>{t("list.noRemote")}</span>
 
 							<span class="pr-request-data__divider">•</span>
-							<Link href={pr.htmlUrl}>Open in browser</Link>
+							<Link href={pr.htmlUrl}>{t("list.openInBrowser")}</Link>
 						</div>
 					</div>
 				</div>
