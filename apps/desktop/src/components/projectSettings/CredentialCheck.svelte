@@ -3,6 +3,7 @@
 	import { GIT_CONFIG_SERVICE } from "$lib/config/gitConfigService";
 	import { classify } from "$lib/error/errorClassification";
 	import { parseError } from "$lib/error/parser";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { OnboardingEvent, POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, Icon, InfoMessage, Link } from "@gitbutler/ui-svelte";
@@ -20,7 +21,7 @@
 	const gitConfig = inject(GIT_CONFIG_SERVICE);
 	const posthog = inject(POSTHOG_WRAPPER);
 
-	type Check = { name: string; promise: Promise<any> };
+	type Check = { nameKey: "credential.fetch" | "credential.push"; promise: Promise<any> };
 	let checks = $state<Check[]>();
 
 	let errors = $state(0);
@@ -37,11 +38,11 @@
 
 		try {
 			const fetchCheck = gitConfig.checkGitFetch(projectId, remoteName);
-			checks = [{ name: "Fetch", promise: fetchCheck }];
+			checks = [{ nameKey: "credential.fetch", promise: fetchCheck }];
 			await fetchCheck;
 			stage = "push";
 			const pushCheck = gitConfig.checkGitPush(projectId, remoteName, branchName);
-			checks = [...checks, { name: "Push", promise: pushCheck }];
+			checks = [...checks, { nameKey: "credential.push", promise: pushCheck }];
 			await pushCheck;
 		} catch (error) {
 			const { code, userMessage } = classify(error);
@@ -75,11 +76,11 @@
 			>
 				{#snippet title()}
 					{#if loading}
-						Checking git credentials …
+						{t("credential.checking")}
 					{:else if errors > 0}
-						There was a problem with your credentials
+						{t("credential.problem")}
 					{:else}
-						All checks passed successfully
+						{t("credential.passed")}
 					{/if}
 				{/snippet}
 
@@ -96,7 +97,7 @@
 										{:catch}
 											<Icon name="danger" size={14} />
 										{/await}
-									</i>{check.name}
+									</i>{t(check.nameKey)}
 
 									{#await check.promise catch err}
 										- {parseError(err).message}
@@ -109,13 +110,13 @@
 					{#if errors > 0}
 						<div class="text-12 text-body help-text" transition:slide>
 							<span>
-								Try another setting and test again?
+								{t("credential.tryAgain")}
 								<br />
-								Consult our
+								{t("credential.consult")}
 								<Link href="https://docs.gitbutler.com/troubleshooting/fetch-push">
-									fetch / push guide
+									{t("credential.guide")}
 								</Link>
-								for help fixing this problem.
+								{t("credential.fix")}
 							</span>
 						</div>
 					{/if}
@@ -125,15 +126,17 @@
 	{/if}
 	<Button style="pop" wide icon="tick" {loading} {disabled} onclick={checkCredentials}>
 		{#if loading || checks?.length === 0}
-			Test credentials
+			{t("credential.test")}
 		{:else}
-			Re-test credentials
+			{t("credential.retest")}
 		{/if}
 	</Button>
 	<SectionCardDisclaimer>
-		To test the push command, we create an empty branch and promptly remove it after the check. <Link
-			href="https://docs.gitbutler.com/troubleshooting/fetch-push">Read more</Link
-		> about authentication methods.
+		{t("credential.pushTest")}
+		<Link href="https://docs.gitbutler.com/troubleshooting/fetch-push"
+			>{t("credential.readMore")}</Link
+		>
+		{t("credential.authAfter")}
 	</SectionCardDisclaimer>
 </div>
 

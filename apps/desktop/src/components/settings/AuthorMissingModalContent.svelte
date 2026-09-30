@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { GIT_SERVICE } from "$lib/git/gitService";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import {
 		TestId,
@@ -43,15 +44,14 @@
 	}
 </script>
 
-<ModalHeader type="warning">Set up your git author information</ModalHeader>
+<ModalHeader type="warning">{t("author.title")}</ModalHeader>
 <div class="author-missing__content">
-	Your commits need author information to identify who made the changes. This information will be
-	saved to your global git configuration and used for all future commits.
+	{t("author.body")}
 
 	<Textbox
 		disabled={settingInfo.current.isLoading}
-		placeholder="Your full name"
-		label="Name"
+		placeholder={t("author.fullName")}
+		label={t("author.name")}
 		testId={TestId.GlobalModal_AuthorMissing_NameInput}
 		bind:value={name}
 		autofocus
@@ -60,14 +60,16 @@
 	<EmailTextbox
 		disabled={settingInfo.current.isLoading}
 		placeholder="your.email@example.com"
-		label="Email address"
+		label={t("author.email")}
 		testId={TestId.GlobalModal_AuthorMissing_EmailInput}
 		bind:value={email}
 		bind:this={emailTextbox}
 	/>
 </div>
 <ModalFooter>
-	<Button kind="outline" onclick={close} disabled={settingInfo.current.isLoading}>Cancel</Button>
+	<Button kind="outline" onclick={close} disabled={settingInfo.current.isLoading}
+		>{t("general.cancel")}</Button
+	>
 	<Button
 		testId={TestId.GlobalModal_AuthorMissing_ActionButton}
 		style="pop"
@@ -75,7 +77,7 @@
 		loading={settingInfo.current.isLoading}
 		disabled={!name || !email}
 	>
-		{settingInfo.current.isLoading ? "Saving..." : "Save & Continue"}
+		{settingInfo.current.isLoading ? t("author.saving") : t("author.save")}
 	</Button>
 </ModalFooter>
 

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import ThemeSelector from "$components/projectSettings/ThemeSelector.svelte";
+	import LanguageSelector from "$components/settings/LanguageSelector.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import {
@@ -38,6 +40,10 @@
 	const defaultFileListMode = uiState.global.defaultFileListMode;
 	const MIN_DIFF_FONT_SIZE = 8;
 	const MAX_DIFF_FONT_SIZE = 32;
+	const fileListOptions = $derived([
+		{ label: t("appearance.fileList.list"), value: "list" },
+		{ label: t("appearance.fileList.tree"), value: "tree" },
+	]);
 
 	// Sync persisted syntax theme settings to the shiki highlighter.
 	$effect(() => {
@@ -75,28 +81,27 @@
 	}
 </script>
 
+<LanguageSelector />
+
 <CardGroup.Item standalone>
 	{#snippet title()}
-		Theme
+		{t("appearance.theme")}
 	{/snippet}
 	<ThemeSelector {uiState} />
 </CardGroup.Item>
 
 <CardGroup.Item alignment="center" standalone>
 	{#snippet title()}
-		Default file list mode
+		{t("appearance.fileListMode")}
 	{/snippet}
 	{#snippet caption()}
-		Set the default file list view (can be changed per location).
+		{t("appearance.fileListMode.caption")}
 	{/snippet}
 	{#snippet actions()}
 		<Select
 			maxWidth={120}
 			value={defaultFileListMode.current}
-			options={[
-				{ label: "List view", value: "list" },
-				{ label: "Tree view", value: "tree" },
-			]}
+			options={fileListOptions}
 			onselect={(value) => {
 				defaultFileListMode.set(value as "tree" | "list");
 			}}
@@ -112,10 +117,10 @@
 
 <CardGroup.Item labelFor="pathFirst" standalone>
 	{#snippet title()}
-		File path first
+		{t("appearance.pathFirst")}
 	{/snippet}
 	{#snippet caption()}
-		Display the full file path before the file name in file lists.
+		{t("appearance.pathFirst.caption")}
 	{/snippet}
 	{#snippet actions()}
 		<Toggle
@@ -131,10 +136,10 @@
 <CardGroup>
 	<CardGroup.Item labelFor="allInOneDiff">
 		{#snippet title()}
-			All-in-one diff
+			{t("appearance.allInOne")}
 		{/snippet}
 		{#snippet caption()}
-			Show a scrollable list of all file diffs instead of only the selected file's diff.
+			{t("appearance.allInOne.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -150,10 +155,10 @@
 	{#if allInOneDiff.current}
 		<CardGroup.Item labelFor="highlightDiffs">
 			{#snippet title()}
-				Highlight active diff
+				{t("appearance.highlight")}
 			{/snippet}
 			{#snippet caption()}
-				Highlight the currently selected file's diff in the all-in-one diff view.
+				{t("appearance.highlight.caption")}
 			{/snippet}
 			{#snippet actions()}
 				<Toggle
@@ -171,7 +176,7 @@
 <CardGroup>
 	<CardGroup.Item alignment="center">
 		{#snippet title()}
-			Diff preview
+			{t("appearance.diffPreview")}
 		{/snippet}
 
 		<HunkDiff
@@ -192,10 +197,10 @@
 
 	<CardGroup.Item alignment="center">
 		{#snippet title()}
-			Syntax theme (light)
+			{t("appearance.syntaxLight")}
 		{/snippet}
 		{#snippet caption()}
-			Color scheme used for syntax highlighting when the app is in light mode.
+			{t("appearance.syntaxLight.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Select
@@ -217,10 +222,10 @@
 
 	<CardGroup.Item alignment="center">
 		{#snippet title()}
-			Syntax theme (dark)
+			{t("appearance.syntaxDark")}
 		{/snippet}
 		{#snippet caption()}
-			Color scheme used for syntax highlighting when the app is in dark mode.
+			{t("appearance.syntaxDark.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Select
@@ -242,10 +247,10 @@
 
 	<CardGroup.Item>
 		{#snippet title()}
-			Font family
+			{t("appearance.fontFamily")}
 		{/snippet}
 		{#snippet caption()}
-			Sets the font for the diff view. The first font name is the default, others are fallbacks.
+			{t("appearance.fontFamily.caption")}
 		{/snippet}
 
 		<Textbox
@@ -260,10 +265,10 @@
 
 	<CardGroup.Item alignment="center">
 		{#snippet title()}
-			Font size
+			{t("appearance.fontSize")}
 		{/snippet}
 		{#snippet caption()}
-			Font size of the code in the diff view.
+			{t("appearance.fontSize.caption")}
 		{/snippet}
 
 		{#snippet actions()}
@@ -285,7 +290,7 @@
 
 	<CardGroup.Item labelFor="allowDiffLigatures">
 		{#snippet title()}
-			Allow font ligatures
+			{t("appearance.ligatures")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -300,10 +305,10 @@
 
 	<CardGroup.Item alignment="center">
 		{#snippet title()}
-			Tab size
+			{t("appearance.tabSize")}
 		{/snippet}
 		{#snippet caption()}
-			Number of spaces per tab in the diff view.
+			{t("appearance.tabSize.caption")}
 		{/snippet}
 
 		{#snippet actions()}
@@ -325,10 +330,10 @@
 
 	<CardGroup.Item labelFor="wrapText">
 		{#snippet title()}
-			Soft wrap
+			{t("appearance.softWrap")}
 		{/snippet}
 		{#snippet caption()}
-			Soft wrap long lines in the diff view to fit within the viewport.
+			{t("appearance.softWrap.caption")}
 		{/snippet}
 
 		{#snippet actions()}
@@ -344,10 +349,10 @@
 
 	<CardGroup.Item labelFor="strongContrast">
 		{#snippet title()}
-			Strong contrast
+			{t("appearance.strongContrast")}
 		{/snippet}
 		{#snippet caption()}
-			Use stronger contrast for added, deleted, and context lines in diffs.
+			{t("appearance.strongContrast.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -362,12 +367,10 @@
 
 	<CardGroup.Item labelFor="colorBlindFriendly">
 		{#snippet title()}
-			Color blind-friendly colors
+			{t("appearance.colorBlind")}
 		{/snippet}
 		{#snippet caption()}
-			Use blue and orange colors instead of green and red for better
-			<br />
-			accessibility with color vision deficiency.
+			{t("appearance.colorBlind.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -382,11 +385,10 @@
 
 	<CardGroup.Item labelFor="inlineUnifiedDiffs">
 		{#snippet title()}
-			Display word diffs inline
+			{t("appearance.inlineDiffs")}
 		{/snippet}
 		{#snippet caption()}
-			Instead of separate lines for removals and additions, this feature shows a single line with
-			both added and removed words highlighted.
+			{t("appearance.inlineDiffs.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -401,10 +403,10 @@
 
 	<CardGroup.Item labelFor="svgAsImage">
 		{#snippet title()}
-			Preview SVG files as images
+			{t("appearance.svg")}
 		{/snippet}
 		{#snippet caption()}
-			Show SVG file changes as an image diff instead of a code diff.
+			{t("appearance.svg.caption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -422,10 +424,10 @@
 	<form class="stack-v" onchange={(e) => onScrollbarFormChange(e.currentTarget)}>
 		<CardGroup.Item labelFor="scrollbar-on-scroll">
 			{#snippet title()}
-				Scrollbar-On-Scroll
+				{t("appearance.scrollbarScroll")}
 			{/snippet}
 			{#snippet caption()}
-				Only show the scrollbar when you are scrolling.
+				{t("appearance.scrollbarScroll.caption")}
 			{/snippet}
 			{#snippet actions()}
 				<RadioButton
@@ -439,10 +441,10 @@
 
 		<CardGroup.Item labelFor="scrollbar-on-hover">
 			{#snippet title()}
-				Scrollbar-On-Hover
+				{t("appearance.scrollbarHover")}
 			{/snippet}
 			{#snippet caption()}
-				Show the scrollbar only when you hover over the scrollable area.
+				{t("appearance.scrollbarHover.caption")}
 			{/snippet}
 			{#snippet actions()}
 				<RadioButton
@@ -456,7 +458,7 @@
 
 		<CardGroup.Item labelFor="scrollbar-always">
 			{#snippet title()}
-				Always show scrollbar
+				{t("appearance.scrollbarAlways")}
 			{/snippet}
 			{#snippet actions()}
 				<RadioButton

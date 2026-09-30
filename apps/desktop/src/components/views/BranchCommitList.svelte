@@ -29,6 +29,7 @@
 		ReorderCommitDzHandler,
 	} from "$lib/dragging/stackingReorderDropzoneManager";
 	import { commitUrl, FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { createCommitSelection } from "$lib/selection/key";
 	import { getStackContext } from "$lib/stacks/stackController.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -451,7 +452,7 @@
 										{@const firstConflictedCommitId = findEarliestConflict(commits)?.id}
 
 										<ChangedFilesPanel
-											title="Changed files"
+											title={t("workspace.changedFiles")}
 											{projectId}
 											{stackId}
 											visibleRange={controller.visibleRange}

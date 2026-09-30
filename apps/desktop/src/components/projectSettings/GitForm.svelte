@@ -6,6 +6,7 @@
 	import SettingsSection from "$components/shared/SettingsSection.svelte";
 	import { BACKEND } from "$lib/backend";
 	import { projectLandDirectly } from "$lib/config/config";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { inject } from "@gitbutler/core/context";
 	import { CardGroup, Spacer, Toggle } from "@gitbutler/ui-svelte";
@@ -26,12 +27,10 @@
 	<CardGroup>
 		<CardGroup.Item labelFor="landDirectly">
 			{#snippet title()}
-				Land branches directly
+				{t("gitForm.landTitle")}
 			{/snippet}
 			{#snippet caption()}
-				Replace the "Create PR" button with a "Land" button that integrates the branch straight into
-				the target branch, without opening a pull request. Shown on the bottom branch of a stack;
-				works without a forge integration.
+				{t("gitForm.landCaption")}
 			{/snippet}
 			{#snippet actions()}
 				<Toggle id="landDirectly" bind:checked={$landDirectly} />
@@ -52,11 +51,10 @@
 			<CardGroup>
 				<CardGroup.Item labelFor="forcePushProtection">
 					{#snippet title()}
-						Force push protection
+						{t("gitForm.forceTitle")}
 					{/snippet}
 					{#snippet caption()}
-						Protect remote commits during force pushes. This will use Git's safer force push flags
-						to avoid overwriting remote commit history.
+						{t("gitForm.forceCaption")}
 					{/snippet}
 					{#snippet actions()}
 						<Toggle

@@ -2,6 +2,7 @@
 	import { changesToDiffSpec } from "$lib/commits/utils";
 	import { computeChangeStatus } from "$lib/files/fileStatus";
 	import { isTreeChange } from "$lib/hunks/change";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { FILE_SELECTION_MANAGER } from "$lib/selection/fileSelectionManager.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
@@ -61,7 +62,7 @@
 <Modal
 	width="small"
 	type="warning"
-	title="Discard changes"
+	title={t("discard.title")}
 	testId={TestId.DiscardFileChangesConfirmationModal}
 	bind:this={modal}
 >
@@ -69,14 +70,14 @@
 		{#if isChangedFilesItem(item)}
 			{#if isChangedFolderItem(item)}
 				<p class="discard-caption">
-					Are you sure you want to discard all changes in
-					<span class="text-bold">{item.path}</span>?
+					{t("discard.folderBefore")}
+					<span class="text-bold">{item.path}</span>{t("discard.folderAfter")}
 				</p>
 			{:else}
 				{@const changes = item.changes}
 				{#if changes.length < 10}
 					<p class="discard-caption">
-						Are you sure you want to discard the changes<br />to the following files:
+						{t("discard.files")}
 					</p>
 					<ul class="file-list">
 						{#each changes as change}
@@ -90,21 +91,19 @@
 					</ul>
 				{:else}
 					<p>
-						Discard the changes to all <span class="text-bold">
-							{changes.length} files
-						</span>?
+						{t("discard.many", { count: changes.length })}
 					</p>
 				{/if}
 			{/if}
 		{:else}
-			<p class="text-13">Woops! Malformed data :(</p>
+			<p class="text-13">{t("discard.malformed")}</p>
 		{/if}
 	{/snippet}
 	{#snippet controls(close, item)}
 		<Button
 			testId={TestId.DiscardFileChangesConfirmationModal_Cancel}
 			kind="outline"
-			onclick={close}>Cancel</Button
+			onclick={close}>{t("general.cancel")}</Button
 		>
 		<AsyncButton
 			testId={TestId.DiscardFileChangesConfirmationModal_Discard}
@@ -114,7 +113,7 @@
 				if (isChangedFilesItem(item)) await confirmDiscard(item);
 			}}
 		>
-			Confirm
+			{t("discard.confirm")}
 		</AsyncButton>
 	{/snippet}
 </Modal>

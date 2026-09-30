@@ -14,6 +14,7 @@
 	import { draggableBranch, type DraggableConfig } from "$lib/dragging/draggable";
 	import { BranchDropData } from "$lib/dragging/dropHandlers/branchDropHandler";
 	import { DROPZONE_REGISTRY } from "$lib/dragging/registry";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Badge, TestId, Icon } from "@gitbutler/ui-svelte";
 	import { DRAG_STATE_SERVICE } from "@gitbutler/ui-svelte/drag/dragStateService.svelte";
@@ -169,7 +170,7 @@
 
 				{#if conflicts}
 					<div class="branch-header__top-badges">
-						<Badge style="danger">Conflicts</Badge>
+						<Badge style="danger">{t("workspace.conflicts")}</Badge>
 					</div>
 				{/if}
 			</div>

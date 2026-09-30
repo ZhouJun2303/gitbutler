@@ -6,6 +6,7 @@
 	import ProjectSwitcher from "$components/shared/ProjectSwitcher.svelte";
 	import AppLayout from "$components/views/AppLayout.svelte";
 	import loadErrorSvg from "$lib/assets/illustrations/load-error.svg?raw";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
 	import { inject } from "@gitbutler/core/context";
@@ -33,7 +34,7 @@
 		try {
 			deleteConfirmationModal?.close();
 			await projectsService.deleteProject(projectId);
-			chipToasts.success("Project deleted");
+			chipToasts.success(t("error.projectDeleted"));
 			goto("/");
 		} finally {
 			loading = false;
@@ -52,13 +53,13 @@
 				<ProjectNameLabel projectName={projectTitle} />
 			</div>
 			<h2 class="problem__title text-18 text-body text-bold">
-				There was a problem loading this repo
+				{t("error.loadRepo")}
 			</h2>
 
 			<div class="problem__error text-12 text-body">
 				<Icon name="danger" color="var(--fill-danger-bg)" />
 				{#if !isDefined(error)}
-					'An unknown error occured'
+					{t("error.unknown")}
 				{:else if error instanceof Object && "message" in error}
 					{error.message}
 				{:else}

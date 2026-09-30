@@ -4,6 +4,7 @@
 	import IllustrationSplitLayout from "$components/shared/IllustrationSplitLayout.svelte";
 	import loadErrorSvg from "$lib/assets/illustrations/load-error.svg?raw";
 	import { parseQueryError } from "$lib/error/error";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Button, InfoMessage } from "@gitbutler/ui-svelte";
 
 	type Props = {
@@ -22,9 +23,9 @@
 
 	function apologiy(): string {
 		if (isMonday()) {
-			return "Sorry about that. Mondays can be tough!";
+			return t("error.monday");
 		}
-		return "We apologize for the inconvenience.";
+		return t("error.sorry");
 	}
 </script>
 
@@ -34,7 +35,7 @@
 	<IllustrationSplitLayout img={loadErrorSvg}>
 		<div class="container">
 			<div class="text-content">
-				<h2 class="title-text text-18 text-body text-bold">Something went wrong</h2>
+				<h2 class="title-text text-18 text-body text-bold">{t("error.wentWrong")}</h2>
 
 				<p class="description-text text-13 text-body">
 					{apologiy()}
@@ -51,7 +52,9 @@
 			</InfoMessage>
 
 			<div class="button-container">
-				<Button type="button" style="pop" onclick={async () => await goto("/")}>Go back</Button>
+				<Button type="button" style="pop" onclick={async () => await goto("/")}
+					>{t("error.goBack")}</Button
+				>
 			</div>
 		</div>
 	</IllustrationSplitLayout>

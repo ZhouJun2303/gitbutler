@@ -12,6 +12,7 @@
 	import SashLayer from "$components/shared/SashLayer.svelte";
 	import emptyFolderSvg from "$lib/assets/empty-state/empty-folder.svg?raw";
 	import { HISTORY_SERVICE, createdOnDay } from "$lib/history/history";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { FILE_SELECTION_MANAGER } from "$lib/selection/fileSelectionManager.svelte";
 	import { createSnapshotSelection, type SelectionId } from "$lib/selection/key";
 	import { inject } from "@gitbutler/core/context";
@@ -86,11 +87,10 @@
 	{#if $snapshots.length === 0 && !$loading}
 		<EmptyStatePlaceholder image={emptyFolderSvg} bottomMargin={48}>
 			{#snippet title()}
-				No snapshots yet
+				{t("history.emptyTitle")}
 			{/snippet}
 			{#snippet caption()}
-				Gitbutler saves your work, including file changes, so your progress is always secure. Adjust
-				snapshot settings in project settings.
+				{t("history.emptyCaption")}
 			{/snippet}
 		</EmptyStatePlaceholder>
 	{/if}
@@ -147,7 +147,7 @@
 				<!-- LOAD MORE -->
 				{#if $loading}
 					<div class="load-more">
-						<span class="text-13 text-body"> Loading more snapshots… </span>
+						<span class="text-13 text-body"> {t("history.loadingMore")} </span>
 					</div>
 				{/if}
 
@@ -158,10 +158,9 @@
 							<Icon name="finish" />
 						</div>
 						<div class="welcome-point__content">
-							<p class="text-13 text-semibold">Welcome to history!</p>
+							<p class="text-13 text-semibold">{t("history.welcomeTitle")}</p>
 							<p class="welcome-point__caption text-12 text-body">
-								Gitbutler saves your work, including file changes, so your progress is always
-								secure. Adjust snapshot settings in project settings.
+								{t("history.emptyCaption")}
 							</p>
 						</div>
 					</div>
@@ -176,15 +175,17 @@
 		<div class="relative overflow-hidden radius-ml">
 			<div bind:this={sidebarEl} class="history-view__snapshots" use:focusable={{ vertical: true }}>
 				<div class="history-view__snapshots-header">
-					<h3 class="history-view__snapshots-header-title text-15 text-bold">Operations history</h3>
+					<h3 class="history-view__snapshots-header-title text-15 text-bold">
+						{t("history.title")}
+					</h3>
 					<Button
 						size="tag"
 						kind="outline"
 						icon="camera"
-						tooltip="Create a manual snapshot of your current state"
+						tooltip={t("history.snapshotTooltip")}
 						onclick={() => createSnapshotModal?.show()}
 					>
-						Create snapshot
+						{t("history.createSnapshot")}
 					</Button>
 				</div>
 				{@render historyEntries()}

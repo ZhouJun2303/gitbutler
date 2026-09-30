@@ -2,6 +2,7 @@
 	import BranchDividerLine from "$components/branch/BranchDividerLine.svelte";
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import BranchesViewBranch from "$components/views/BranchesViewBranch.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { getColorFromPushStatus } from "$lib/stacks/stack";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
@@ -36,7 +37,7 @@
 <ReduxResult result={stackQuery.result} {projectId} {stackId} {onerror}>
 	{#snippet children(stack, { stackId, projectId })}
 		{#if stack === null}
-			<p>Stack not found.</p>
+			<p>{t("list.stackMissing")}</p>
 		{:else}
 			{#each stack.segments as segment, idx}
 				{@const branchName = segment.refName?.displayName}

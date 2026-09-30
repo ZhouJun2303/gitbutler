@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Tooltip from "$lib/components/Tooltip.svelte";
+	import { getUiLanguage } from "$lib/i18n/locale.svelte";
 	import { createTimeAgoStore, getAbsoluteTimestamp } from "$lib/utils/timeAgo";
 
 	interface Props {
@@ -10,8 +11,15 @@
 	}
 
 	const { date, addSuffix, showTooltip = true, capitalize = false }: Props = $props();
-	const store = $derived(createTimeAgoStore(date, addSuffix));
-	const absoluteTime = $derived(date ? getAbsoluteTimestamp(date) : "");
+	const language = $derived(getUiLanguage());
+	const store = $derived.by(() => {
+		void language;
+		return createTimeAgoStore(date, addSuffix);
+	});
+	const absoluteTime = $derived.by(() => {
+		void language;
+		return date ? getAbsoluteTimestamp(date) : "";
+	});
 
 	function formatText(value: string | undefined): string {
 		if (!value) return "";

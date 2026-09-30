@@ -23,6 +23,7 @@
 	} from "$lib/forge/gitlab/gitlabUserService.svelte";
 	import { usePreferredGitLabUsername } from "$lib/forge/gitlab/hooks.svelte";
 	import { LISTING_SERVICE } from "$lib/forge/listingService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { inject } from "@gitbutler/core/context";
 	import { reactive } from "@gitbutler/shared/reactiveUtils.svelte";
@@ -41,13 +42,25 @@
 
 	type ForgeSelection = ForgeName | "default";
 
-	const FORGE_OPTIONS: { label: string; value: ForgeSelection }[] = [
-		{ label: "None", value: "default" },
+	const FORGE_OPTIONS = $derived<{ label: string; value: ForgeSelection }[]>([
+		{ label: t("forgeForm.none"), value: "default" },
 		{ label: "GitHub", value: "github" },
 		{ label: "GitLab", value: "gitlab" },
 		{ label: "Azure", value: "azure" },
 		{ label: "BitBucket", value: "bitbucket" },
-	];
+	]);
+
+	const reviewStackingOptions = $derived([
+		{ label: t("forgeForm.bottom"), value: "bottom" },
+		{ label: t("forgeForm.top"), value: "top" },
+		{ label: t("forgeForm.disabled"), value: "disabled" },
+	]);
+
+	const githubStackingOptions = $derived([
+		{ label: t("forgeForm.auto"), value: "auto" },
+		{ label: t("forgeForm.disabled"), value: "disabled" },
+		{ label: t("forgeForm.native"), value: "native" },
+	]);
 
 	const { projectId }: { projectId: string } = $props();
 
@@ -143,23 +156,22 @@
 <CardGroup>
 	<CardGroup.Item>
 		{#snippet title()}
-			Forge override
+			{t("forgeForm.override")}
 		{/snippet}
 
 		{#snippet caption()}
 			{#if determinedForgeType === "default"}
-				We couldn't detect which Forge you're using.
+				{t("forgeForm.undetected")}
 				<br />
-				To enable Forge integration, please select your Forge from the dropdown below.
+				{t("forgeForm.select")}
 				<br />
-				<span class="text-bold">Note:</span> Currently, only GitHub, GitLab and Bitbucket support pull
-				request creation.
+				<span class="text-bold">{t("forgeForm.note")}</span>
+				{t("forgeForm.onlyThree")}
 			{:else}
-				We’ve detected that you’re using <span class="text-bold"
-					>{determinedForgeType.toUpperCase()}</span
-				>.
+				{t("forgeForm.detected")}
+				<span class="text-bold">{determinedForgeType.toUpperCase()}</span>.
 				<br />
-				At the moment, it’s not possible to manually override the detected forge type.
+				{t("forgeForm.noOverride")}
 			{/if}
 		{/snippet}
 
@@ -181,23 +193,17 @@
 
 	<CardGroup.Item>
 		{#snippet title()}
-			Stack information in review descriptions
+			{t("forgeForm.stackInfo")}
 		{/snippet}
 
 		{#snippet caption()}
-			Choose where GitButler-managed stack information appears. Changes apply on the next review
-			sync. The default is Bottom. Does not apply to native GitHub stacked pull requests, where
-			GitHub shows the stack on its own.
+			{t("forgeForm.stackInfoHelp")}
 		{/snippet}
 
 		<div data-testid="review-stacking-description-select">
 			<Select
 				value={reviewStackingDescription}
-				options={[
-					{ label: "Bottom", value: "bottom" },
-					{ label: "Top", value: "top" },
-					{ label: "Disabled", value: "disabled" },
-				]}
+				options={reviewStackingOptions}
 				wide
 				onselect={(value) => updateReviewStackingDescription(value as ReviewStackingDescription)}
 			>
@@ -215,25 +221,17 @@
 	{#if forgeInfo?.name === "github"}
 		<CardGroup.Item>
 			{#snippet title()}
-				Native GitHub stacked pull requests
+				{t("forgeForm.nativeTitle")}
 			{/snippet}
 
 			{#snippet caption()}
-				Register this project’s reviewed stacks with GitHub’s private-preview stacks API. Higher
-				pull requests may merge the pull requests below them. Auto falls back to description
-				metadata when the repository is not enrolled in the preview, while Native reports an error.
-				Changes apply on the next push or pull request creation. Fork-backed pull requests always
-				use description metadata.
+				{t("forgeForm.nativeHelp")}
 			{/snippet}
 
 			<div data-testid="github-stacking-mode-select">
 				<Select
 					value={githubStackingMode}
-					options={[
-						{ label: "Auto", value: "auto" },
-						{ label: "Disabled", value: "disabled" },
-						{ label: "Native", value: "native" },
-					]}
+					options={githubStackingOptions}
 					wide
 					onselect={(value) => updateGitHubStackingMode(value as GitHubStackingMode)}
 				>

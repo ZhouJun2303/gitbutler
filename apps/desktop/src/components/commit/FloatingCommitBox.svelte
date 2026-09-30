@@ -1,5 +1,6 @@
 <script lang="ts">
 	import FloatingModal from "$lib/floating/FloatingModal.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Icon } from "@gitbutler/ui-svelte";
@@ -56,7 +57,7 @@
 </FloatingModal>
 
 <button class="exit-floating-mode" type="button" onclick={onExitFloatingModeClick}>
-	<span class="text-12 text-semibold underline-dotted">Exit floating mode</span>
+	<span class="text-12 text-semibold underline-dotted">{t("diff.exitFloating")}</span>
 </button>
 
 <style>

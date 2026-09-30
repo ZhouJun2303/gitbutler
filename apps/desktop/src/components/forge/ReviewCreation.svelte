@@ -22,6 +22,7 @@
 	import { type PullRequest } from "$lib/forge/interface/types";
 	import { PrPersistedStore } from "$lib/forge/prContents";
 	import { PR_SERVICE } from "$lib/forge/prService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { showToast } from "$lib/notifications/toasts";
 	import { SETTINGS_SERVICE } from "$lib/settings/appSettings";
 	import { requiresPush } from "$lib/stacks/stack";
@@ -249,7 +250,7 @@
 			console.error(err);
 			const toast = mapErrorToToast(err);
 			if (toast) showToast(toast);
-			else showError("Error while creating pull request", err);
+			else showError(t("error.pr"), err);
 		}
 	}
 

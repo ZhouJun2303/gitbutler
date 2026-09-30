@@ -5,6 +5,7 @@
 	import { persistedDismissedForgeIntegrationPrompt } from "$lib/config/config";
 	import { useForgeAuth } from "$lib/forge/forgeAuth.svelte";
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { useSettingsModal } from "$lib/settings/settingsModal.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { reactive } from "@gitbutler/shared/reactiveUtils.svelte";
@@ -77,7 +78,7 @@
 	}
 
 	function forgeUnitFor(name: SetupForgeName): string {
-		return name === "gitlab" ? "Merge Requests" : "Pull Requests";
+		return name === "gitlab" ? t("forgeBanner.mrs") : t("forgeBanner.prs");
 	}
 
 	function forgeDocsLinkFor(name: SetupForgeName): string {
@@ -113,15 +114,15 @@
 		<div class="forge-prompt__logo">
 			{@html forgeLogoFor(forgeName)}
 		</div>
-		<h3 class="text-13 text-body text-bold">It looks like you have a {forgeLabel} remote!</h3>
+		<h3 class="text-13 text-body text-bold">{t("forgeBanner.title", { forge: forgeLabel })}</h3>
 		<p class="text-12 text-body m-b-8 clr-text-2">
-			GitButler can display, create and manage {forgeUnit} for you directly in the app.
-			<Link href={integrationDocs}>Read more</Link>
+			{t("forgeBanner.body", { unit: forgeUnit })}
+			<Link href={integrationDocs}>{t("forgeBanner.readMore")}</Link>
 		</p>
 
 		<div class="forge-prompt__footer">
-			<Button kind="outline" onclick={dismissPrompt}>Dismiss</Button>
-			<Button style="pop" onclick={configureIntegration}>Configure integration…</Button>
+			<Button kind="outline" onclick={dismissPrompt}>{t("forgeBanner.dismiss")}</Button>
+			<Button style="pop" onclick={configureIntegration}>{t("forgeBanner.configure")}</Button>
 		</div>
 	</div>
 {/if}

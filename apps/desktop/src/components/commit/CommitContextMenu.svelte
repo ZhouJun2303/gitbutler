@@ -58,6 +58,7 @@
 	import { URL_SERVICE } from "$lib/backend/url";
 	import { projectAiGenEnabled } from "$lib/config/config";
 	import { rewrapCommitMessage } from "$lib/config/uiFeatureFlags";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { editPatch } from "$lib/mode/editPatchUtils";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { dismissToast, showToast } from "$lib/notifications/toasts";
@@ -215,7 +216,7 @@
 					<!-- Multi-select actions -->
 					<ContextMenuSection>
 						<ContextMenuItem
-							label="Squash {multiSelect.commitIds.length} commits"
+							label={t("commitMenu.squashMany", { count: multiSelect.commitIds.length })}
 							icon="commit-double-chevron-down"
 							testId={TestId.CommitRowContextMenu_SquashSelected}
 							disabled={isReadOnly}
@@ -227,7 +228,7 @@
 							}}
 						/>
 						<ContextMenuItem
-							label="Uncommit {multiSelect.commitIds.length} commits"
+							label={t("commitMenu.uncommitMany", { count: multiSelect.commitIds.length })}
 							icon="undo"
 							testId={TestId.CommitRowContextMenu_UncommitSelected}
 							disabled={isReadOnly}
@@ -244,7 +245,7 @@
 					{@const { onUncommitClick, onEditMessageClick } = contextData}
 					<ContextMenuSection>
 						<ContextMenuItem
-							label="Uncommit"
+							label={t("commitMenu.uncommit")}
 							icon="undo"
 							testId={TestId.CommitRowContextMenu_UncommitMenuButton}
 							disabled={isReadOnly}
@@ -256,7 +257,7 @@
 							}}
 						/>
 						<ContextMenuItem
-							label="Reword commit"
+							label={t("commitMenu.reword")}
 							icon="edit"
 							testId={TestId.CommitRowContextMenu_EditMessageMenuButton}
 							disabled={isReadOnly}
@@ -268,7 +269,7 @@
 							}}
 						/>
 						<ContextMenuItem
-							label="Edit commit"
+							label={t("commitMenu.edit")}
 							icon="commit-edit"
 							testId={TestId.CommitRowContextMenu_EditCommit}
 							disabled={isReadOnly}
@@ -281,7 +282,7 @@
 						/>
 						{#if contextData.hasConflicts && $aiGenEnabled && aiConfigurationValid}
 							<ContextMenuItem
-								label="Resolve conflicts with AI"
+								label={t("commitMenu.resolveAi")}
 								icon="ai"
 								testId={TestId.CommitRowContextMenu_ResolveConflictsAi}
 								disabled={isReadOnly || aiResolution.current.isLoading}
@@ -301,7 +302,7 @@
 				<ContextMenuSection>
 					{#if commitUrl}
 						<ContextMenuItem
-							label="Open in browser"
+							label={t("commitMenu.openBrowser")}
 							icon="open-in-browser"
 							onclick={async () => {
 								await urlService.openExternalUrl(commitUrl);
@@ -309,31 +310,33 @@
 							}}
 						/>
 					{/if}
-					<ContextMenuItemSubmenu label="Copy" icon="copy">
+					<ContextMenuItemSubmenu label={t("commitMenu.copy")} icon="copy">
 						{#snippet submenu({ close: closeSubmenu })}
 							<ContextMenuSection>
 								{#if commitUrl}
 									<ContextMenuItem
-										label="Copy commit link"
+										label={t("commitMenu.copyLink")}
 										onclick={() => {
-											clipboardService.write(commitUrl, { message: "Commit link copied" });
+											clipboardService.write(commitUrl, { message: t("commitMenu.linkCopied") });
 											closeSubmenu();
 											close();
 										}}
 									/>
 								{/if}
 								<ContextMenuItem
-									label="Copy commit hash"
+									label={t("commitMenu.copyHash")}
 									onclick={() => {
-										clipboardService.write(commitId, { message: "Commit hash copied" });
+										clipboardService.write(commitId, { message: t("commitMenu.hashCopied") });
 										closeSubmenu();
 										close();
 									}}
 								/>
 								<ContextMenuItem
-									label="Copy commit message"
+									label={t("commitMenu.copyMessage")}
 									onclick={() => {
-										clipboardService.write(commitMessage, { message: "Commit message copied" });
+										clipboardService.write(commitMessage, {
+											message: t("commitMenu.messageCopied"),
+										});
 										closeSubmenu();
 										close();
 									}}
@@ -342,11 +345,11 @@
 						{/snippet}
 					</ContextMenuItemSubmenu>
 					{#if isLocal}
-						<ContextMenuItemSubmenu label="Add empty commit" icon="commit-plus">
+						<ContextMenuItemSubmenu label={t("commitMenu.addEmpty")} icon="commit-plus">
 							{#snippet submenu({ close: closeSubmenu })}
 								<ContextMenuSection>
 									<ContextMenuItem
-										label="Add empty commit above"
+										label={t("commitMenu.addEmptyAbove")}
 										disabled={isReadOnly || commitInsertion.current.isLoading}
 										onclick={() => {
 											insertBlankCommit(commitId, "above");
@@ -355,7 +358,7 @@
 										}}
 									/>
 									<ContextMenuItem
-										label="Add empty commit below"
+										label={t("commitMenu.addEmptyBelow")}
 										disabled={isReadOnly || commitInsertion.current.isLoading}
 										onclick={() => {
 											insertBlankCommit(commitId, "below");
@@ -366,11 +369,11 @@
 								</ContextMenuSection>
 							{/snippet}
 						</ContextMenuItemSubmenu>
-						<ContextMenuItemSubmenu label="Create branch" icon="branch">
+						<ContextMenuItemSubmenu label={t("commitMenu.createBranch")} icon="branch">
 							{#snippet submenu({ close: closeSubmenu })}
 								<ContextMenuSection>
 									<ContextMenuItem
-										label="Add branch above"
+										label={t("commitMenu.addBranchAbove")}
 										disabled={isReadOnly || branchCreation.current.isLoading}
 										onclick={async () => {
 											if (!isReadOnly) {
@@ -381,7 +384,7 @@
 										}}
 									/>
 									<ContextMenuItem
-										label="Add branch below"
+										label={t("commitMenu.addBranchBelow")}
 										disabled={isReadOnly || branchCreation.current.isLoading}
 										onclick={async () => {
 											if (!isReadOnly) {
@@ -399,7 +402,7 @@
 
 				<ContextMenuSection>
 					<ContextMenuItem
-						label={$rewrapCommitMessage ? "Show original wrapping" : "Rewrap message"}
+						label={$rewrapCommitMessage ? t("commitMenu.showOriginal") : t("commitMenu.rewrap")}
 						icon="text-wrap"
 						disabled={commitInsertion.current.isLoading}
 						onclick={() => {

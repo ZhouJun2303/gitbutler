@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { CLIPBOARD_SERVICE } from "$lib/backend/clipboard";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import {
@@ -68,9 +69,9 @@
 	onSubmit={async () => {
 		try {
 			await chipToasts.promise(absorb({ projectId, absorptionPlan: absorbPlan }), {
-				loading: "Absorbing changes",
-				success: "Changes absorbed successfully",
-				error: "Failed to absorb changes",
+				loading: t("absorb.loading"),
+				success: t("absorb.success"),
+				error: t("absorb.failed"),
 			});
 			modal?.close();
 		} catch (error) {
@@ -78,11 +79,11 @@
 		}
 	}}
 >
-	<ModalHeader sticky={!isScrollVisible}>Absorb Changes into Commits</ModalHeader>
+	<ModalHeader sticky={!isScrollVisible}>{t("absorb.title")}</ModalHeader>
 	<ScrollableContainer onscrollTop={(visible) => (isScrollVisible = visible)}>
 		<div class="absorb-plan-content">
 			<p class="text-13 text-body clr-text-2">
-				The following changes will be absorbed into their respective commits:
+				{t("absorb.plan")}
 			</p>
 			<div class="commit-absorptions">
 				{#each absorbPlan as commitAbsorption}
@@ -111,7 +112,7 @@
 										text={commitAbsorption.commitId.slice(0, 7)}
 										onclick={() => {
 											clipboardService.write(commitAbsorption.commitId, {
-												message: "Commit ID copied",
+												message: t("absorb.copied"),
 											});
 										}}
 									/>
@@ -136,7 +137,7 @@
 	</ScrollableContainer>
 
 	{#snippet controls(close)}
-		<Button kind="outline" onclick={close}>Cancel</Button>
+		<Button kind="outline" onclick={close}>{t("general.cancel")}</Button>
 		<Button
 			style="pop"
 			type="submit"
@@ -144,7 +145,7 @@
 			disabled={absorbPlan.length === 0 || absorbingChanges.current.isLoading}
 			testId={TestId.AbsorbModal_ActionButton}
 		>
-			Absorb changes
+			{t("absorb.action")}
 		</Button>
 	{/snippet}
 </Modal>

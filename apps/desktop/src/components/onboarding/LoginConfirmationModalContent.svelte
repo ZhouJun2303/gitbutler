@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { USER_SERVICE } from "$lib/user/userService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, ModalHeader, ModalFooter, SkeletonBone } from "@gitbutler/ui-svelte";
@@ -46,7 +47,7 @@
 	const avatarSize = "3.25rem";
 </script>
 
-<ModalHeader type="info">Confirm login attempt for {incomingUserName}</ModalHeader>
+<ModalHeader type="info">{t("login.title", { name: incomingUserName })}</ModalHeader>
 <div class="modal-content">
 	{#await getUserAvatarURL()}
 		<SkeletonBone width={avatarSize} height={avatarSize} radius="100%" />
@@ -55,14 +56,15 @@
 	{/await}
 
 	<p class="text-13 text-body clr-text-2">
-		A new login attempt has been detected for the user with email
-		<span class="text-bold clr-text-1">{incomingUserEmail ?? "-unknown-"}</span>. Would you like to
-		accept this login?
+		{t("login.bodyBefore")}
+		<span class="text-bold clr-text-1">{incomingUserEmail ?? t("login.unknown")}</span>{t(
+			"login.bodyAfter",
+		)}
 	</p>
 </div>
 <ModalFooter>
-	<Button kind="outline" onclick={rejectLogin}>Reject</Button>
-	<Button style="pop" onclick={acceptLogin}>Accept login</Button>
+	<Button kind="outline" onclick={rejectLogin}>{t("login.reject")}</Button>
+	<Button style="pop" onclick={acceptLogin}>{t("login.accept")}</Button>
 </ModalFooter>
 
 <style lang="postcss">

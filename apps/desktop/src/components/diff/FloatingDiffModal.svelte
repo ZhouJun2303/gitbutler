@@ -12,6 +12,7 @@
 	import FloatingModal from "$lib/floating/FloatingModal.svelte";
 	import { isExecutableStatus } from "$lib/hunks/change";
 	import { DIFF_SERVICE } from "$lib/hunks/diffService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { FILE_SELECTION_MANAGER } from "$lib/selection/fileSelectionManager.svelte";
 	import { type SelectionId } from "$lib/selection/key";
 	import { ScrollSelectionLock } from "$lib/selection/scrollSelectionLock.svelte";
@@ -153,7 +154,7 @@
 						<Icon name="drag-square" />
 					</div>
 					<ChangedFileStats
-						title="Files changed"
+						title={t("diff.filesChanged")}
 						bind:mode={listMode}
 						persistId="floating-diff-modal"
 						fileCount={changes.length}

@@ -15,6 +15,7 @@
 		projectCommitGenerationUseEmojis,
 	} from "$lib/config/config";
 	import { showError } from "$lib/error/showError";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { uploadFiles } from "@gitbutler/shared/dom";
@@ -164,7 +165,7 @@
 
 		if (failed.length > 0) {
 			console.error("File upload failed", failed);
-			showError("File upload failed", failed.map((result) => result.reason).join(", "));
+			showError(t("upload.failed"), failed.map((result) => result.reason).join(", "));
 		}
 
 		allowUploadOnce = false;
@@ -235,17 +236,14 @@
 		medium: 320,
 	};
 
-	const generateMessages = $derived.by(() => ({
-		commit: "Generate commit message",
-		pr: `Generate ${reviewUnitAbbr ?? "PR"} description`,
-	}));
-
 	function getTooltipText(): string | undefined {
 		if (!canUseAI) {
-			return "You need to enable AI in the project settings to use this feature";
+			return t("editor.aiDisabled");
 		}
 		if (currentEditorWidth <= DROPDOWN_BTN_BREAKPOINTS.medium) {
-			return generateMessages[messageType];
+			return messageType === "commit"
+				? t("editor.generateCommit")
+				: t("editor.generateReview", { abbr: reviewUnitAbbr ?? "PR" });
 		}
 		return undefined;
 	}
@@ -254,12 +252,14 @@
 </script>
 
 {#snippet buttonText()}
-	{currentEditorWidth > DROPDOWN_BTN_BREAKPOINTS.medium ? "Generate message" : "Generate"}
+	{currentEditorWidth > DROPDOWN_BTN_BREAKPOINTS.medium
+		? t("editor.generateMessage")
+		: t("editor.generate")}
 {/snippet}
 
 <Modal
 	type="warning"
-	title="Off to the cloud it goes!"
+	title={t("upload.title")}
 	width="small"
 	bind:this={uploadConfirmationModal}
 	onSubmit={async (close) => {
@@ -280,18 +280,17 @@
 		close();
 	}}
 >
-	Your file will be stored in GitButler’s digital vault, safe and sound. We promise it’s secure, so
-	feel free to share the link however you like 🔐
+	{t("upload.body")}
 	{#snippet controls(close)}
 		<div class="modal-footer">
 			<div class="flex flex-1">
 				<label for="dont-show-again" class="modal-footer__checkbox">
 					<Checkbox name="dont-show-again" small bind:checked={$doNotShowUploadWarning} />
-					<span class="text-12"> Don’t show again</span>
+					<span class="text-12">{t("upload.dontShow")}</span>
 				</label>
 			</div>
-			<Button kind="outline" onclick={close}>Cancel</Button>
-			<Button style="pop" type="submit">Yes, upload!</Button>
+			<Button kind="outline" onclick={close}>{t("general.cancel")}</Button>
+			<Button style="pop" type="submit">{t("upload.yes")}</Button>
 		</div>
 	{/snippet}
 </Modal>
@@ -365,7 +364,7 @@
 				<Button
 					kind="ghost"
 					icon={useFloatingBox.current ? "pop-out-top-left" : "pop-out-bottom-right"}
-					tooltip={useFloatingBox.current ? "Exit floating mode" : "Use floating mode"}
+					tooltip={useFloatingBox.current ? t("editor.exitFloating") : t("editor.useFloating")}
 					onclick={() => {
 						useFloatingBox.set(!useFloatingBox.current);
 					}}
@@ -378,7 +377,7 @@
 					<Button
 						kind="ghost"
 						icon="paperclip"
-						tooltip="Drop, paste or click to upload files"
+						tooltip={t("editor.uploadFiles")}
 						onclick={handleAttachFiles}
 					/>
 				{/if}
@@ -386,7 +385,7 @@
 					<FormattingButton
 						icon="text-wrap"
 						activated={useRuler}
-						tooltip="Wrap text automatically"
+						tooltip={t("editor.wrap")}
 						onclick={async () => {
 							uiState.global.useRuler.set(!useRuler);
 							await tick(); // Wait for reactive update.
@@ -439,7 +438,7 @@
 				{#snippet contextMenuSlot()}
 					<ContextMenuSection>
 						<ContextMenuItem
-							label="Extra concise"
+							label={t("editor.extraConcise")}
 							onclick={() => ($commitGenerationExtraConcise = !$commitGenerationExtraConcise)}
 						>
 							{#snippet control()}
@@ -448,7 +447,7 @@
 						</ContextMenuItem>
 
 						<ContextMenuItem
-							label="Haiku"
+							label={t("editor.haiku")}
 							onclick={() => ($commitGenerationHaiku = !$commitGenerationHaiku)}
 						>
 							{#snippet control()}
@@ -457,7 +456,7 @@
 						</ContextMenuItem>
 
 						<ContextMenuItem
-							label="Use emojis 😎"
+							label={t("editor.emojis")}
 							onclick={() => ($commitGenerationUseEmojis = !$commitGenerationUseEmojis)}
 						>
 							{#snippet control()}

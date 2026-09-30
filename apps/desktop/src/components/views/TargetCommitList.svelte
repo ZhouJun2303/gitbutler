@@ -5,6 +5,7 @@
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import { BASE_BRANCH_SERVICE } from "$lib/baseBranch/baseBranchService.svelte";
 	import { commitCommittedAt } from "$lib/branches/v3";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { createCommitSelection } from "$lib/selection/key";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
@@ -112,7 +113,7 @@
 									<ReduxResult {projectId} result={changesQuery.result}>
 										{#snippet children(changesResult)}
 											<ChangedFilesPanel
-												title="Changed files"
+												title={t("workspace.changedFiles")}
 												{projectId}
 												draggableFiles
 												selectionId={createCommitSelection({ commitId: commit.id })}

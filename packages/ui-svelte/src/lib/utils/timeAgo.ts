@@ -1,4 +1,6 @@
+import { getUiLanguage, uiText } from "$lib/i18n/locale.svelte";
 import dayjs from "dayjs";
+import "dayjs/locale/zh-cn";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 import timezone from "dayjs/plugin/timezone";
@@ -12,6 +14,7 @@ dayjs.extend(timezone);
 
 function customFormatDistance(date: Date, addSuffix: boolean): string {
 	const distance = dayjs(date).fromNow(!addSuffix);
+	if (getUiLanguage() === "zh") return distance;
 	return distance.replace(
 		/\b(seconds?|minutes?|hours?|days?|months?|years?)\b/g,
 		(match) => unitShorthandMap[match] ?? "",
@@ -38,8 +41,9 @@ export function getTimeAgo(input: Date | number, addSuffix: boolean = true): str
 
 	const seconds = Math.round(Math.abs((new Date().getTime() - date.getTime()) / 1000.0));
 	if (seconds < 10) {
-		return "just now";
+		return uiText("time.justNow");
 	} else {
+		dayjs.locale(getUiLanguage() === "zh" ? "zh-cn" : "en");
 		return customFormatDistance(date, addSuffix);
 	}
 }
@@ -88,17 +92,21 @@ export function getAbsoluteTimestamp(input: Date | number | undefined, locale?: 
 	if (!input) return "";
 	const date = typeof input === "number" ? new Date(input) : input;
 
+	const uiZh = !locale && getUiLanguage() === "zh";
+	const resolvedLocale = locale ?? (uiZh ? "zh-CN" : undefined);
+
 	// Format the date and time using specified locale or browser locale
-	const dateStr = date.toLocaleDateString(locale, {
+	const dateStr = date.toLocaleDateString(resolvedLocale, {
 		year: "numeric",
 		month: "long",
 		day: "numeric",
 	});
-	const timeStr = date.toLocaleTimeString(locale, {
+	const timeStr = date.toLocaleTimeString(resolvedLocale, {
 		hour: "2-digit",
 		minute: "2-digit",
 	});
 
+	if (uiZh) return `${dateStr} ${timeStr}`;
 	return `${dateStr} at ${timeStr}`;
 }
 

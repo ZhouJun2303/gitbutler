@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { showError } from "$lib/error/showError";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { AsyncButton, Button, Modal, chipToasts } from "@gitbutler/ui-svelte";
@@ -18,9 +19,11 @@
 	let wholeStack = $state(false);
 	let lowerBranches = $state<string[]>([]);
 
-	const targetLabel = $derived(targetBranchName ?? "the target branch");
+	const targetLabel = $derived(targetBranchName ?? t("land.targetFallback"));
 	const landedLabel = $derived(
-		wholeStack ? `"${branchName}" and the branches below it` : `"${branchName}"`,
+		wholeStack
+			? t("land.andBelow", { branch: branchName ?? "" })
+			: t("land.quoted", { branch: branchName ?? "" }),
 	);
 	const lowerListLabel = $derived(lowerBranches.length > 0 ? ` (${lowerBranches.join(", ")})` : "");
 
@@ -46,37 +49,44 @@
 				wholeStack,
 			});
 			if (result.landed.type === "alreadyIntegrated") {
-				chipToasts.success(`${landedLabel} is already integrated into ${targetLabel}`);
+				chipToasts.success(t("land.already", { name: landedLabel, target: targetLabel }));
 			} else {
-				chipToasts.success(`Landed ${landedLabel} into ${targetLabel}`);
+				chipToasts.success(t("land.done", { name: landedLabel, target: targetLabel }));
 			}
 			if (result.reconcileSkipped) {
-				chipToasts.warning("Other branches were left un-reconciled. Run `but pull` to finish.");
+				chipToasts.warning(t("land.reconcile"));
 			}
 			return true;
 		} catch (error) {
-			showError("Failed to land branch", error);
+			showError(t("land.failed"), error);
 			return false;
 		}
 	}
 </script>
 
-<Modal bind:this={modalEl} width="small" title={wholeStack ? "Land stack" : "Land branch"}>
+<Modal
+	bind:this={modalEl}
+	width="small"
+	title={wholeStack ? t("land.stack") : t("land.branchTitle")}
+>
 	<p>
 		{#if wholeStack}
-			This lands <strong>{branchName}</strong> and everything below it in its stack{lowerListLabel}
-			directly onto {targetLabel}. It cannot be undone.
+			{t("land.wholeBefore")}
+			<strong>{branchName}</strong>
+			{t("land.wholeAfter", { extra: lowerListLabel, target: targetLabel })}
 		{:else}
-			This lands <strong>{branchName}</strong> directly onto {targetLabel}. It cannot be undone.
+			{t("land.wholeBefore")}
+			<strong>{branchName}</strong>
+			{t("land.oneAfter", { target: targetLabel })}
 		{/if}
 	</p>
 	{#snippet controls(close)}
-		<Button kind="outline" type="reset" onclick={close}>Cancel</Button>
+		<Button kind="outline" type="reset" onclick={close}>{t("general.cancel")}</Button>
 		<AsyncButton
 			style="pop"
 			action={async () => {
 				if (await land()) close();
-			}}>Land</AsyncButton
+			}}>{t("branchMenu.land")}</AsyncButton
 		>
 	{/snippet}
 </Modal>

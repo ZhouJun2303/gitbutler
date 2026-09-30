@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { InfoMessage, Link } from "@gitbutler/ui-svelte";
 
 	import type { Code } from "@gitbutler/but-sdk";
@@ -9,37 +10,32 @@
 {#if errorCode === "GitHubOrgOAuthRestricted"}
 	<InfoMessage style="warning" filled outlined={false}>
 		{#snippet title()}
-			Restricted by a GitHub organization
+			{t("notice.orgBlocked")}
 		{/snippet}
 		{#snippet content()}
-			An organization that owns this repository has blocked the GitButler OAuth app, so pull
-			requests can't be listed or created right now. Ask an organization owner to approve the app,
-			or connect an account that uses a personal access token — see the
+			{t("notice.orgBlockedHelp")}
 			<Link
 				href="https://docs.gitbutler.com/features/forge-integration/github-integration?utm_source=gitbutler-app&utm_medium=settings-banner&utm_campaign=org-oauth-restriction#connect-a-github-account"
-				>docs</Link
+				>{t("forgeAccount.docs")}</Link
 			>.
 		{/snippet}
 	</InfoMessage>
 {:else if errorCode === "GitHubOrgSamlRestricted"}
 	<InfoMessage style="warning" filled outlined={false}>
 		{#snippet title()}
-			GitHub organization requires SAML SSO
+			{t("notice.saml")}
 		{/snippet}
 		{#snippet content()}
-			This repository's organization requires SAML SSO, but the selected GitHub credential isn't
-			authorized for it. In GitHub, authorize the GitButler OAuth app or your personal access token
-			for the organization, then try again.
+			{t("notice.samlHelp")}
 		{/snippet}
 	</InfoMessage>
 {:else if errorCode === "GitHubTokenLifetimeRestricted"}
 	<InfoMessage style="warning" filled outlined={false}>
 		{#snippet title()}
-			GitHub organization limits token lifetime
+			{t("notice.tokenLife")}
 		{/snippet}
 		{#snippet content()}
-			This repository's organization refuses personal access tokens that stay valid longer than its
-			policy allows. Create a token with a shorter expiration, then connect GitHub with it here.
+			{t("notice.tokenLifeHelp")}
 		{/snippet}
 	</InfoMessage>
 {/if}

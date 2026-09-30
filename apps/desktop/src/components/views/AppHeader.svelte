@@ -5,6 +5,7 @@
 	import IntegrateUpstreamModal from "$components/upstream/IntegrateUpstreamModal.svelte";
 	import { BACKEND } from "$lib/backend";
 	import { BASE_BRANCH_SERVICE } from "$lib/baseBranch/baseBranchService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { handleAddProjectOutcome } from "$lib/project/project";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
@@ -104,9 +105,9 @@
 		}
 
 		return [
-			{ header: "Recent" },
+			{ header: t("header.recent") },
 			...recent.map((project) => ({ value: project.id, label: project.title })),
-			{ header: "Other projects" },
+			{ header: t("header.otherProjects") },
 			...others.map((project) => ({ value: project.id, label: project.title })),
 		];
 	});
@@ -182,20 +183,22 @@
 			<SyncButton {projectId} disabled={actionsDisabled} />
 
 			{#if isHasUpstreamCommits}
-				<Tooltip text={isDetached ? "HEAD is detached" : undefined} disabled={!isDetached}>
+				<Tooltip text={isDetached ? t("header.detached") : undefined} disabled={!isDetached}>
 					<Button
 						testId={TestId.IntegrateUpstreamCommitsButton}
 						style="pop"
 						onclick={openModal}
 						disabled={!projectId || actionsDisabled || isDetached}
 					>
-						{upstreamCommits} upstream {upstreamCommits === 1 ? "commit" : "commits"}
+						{upstreamCommits === 1
+							? t("header.upstreamOne", { count: upstreamCommits })
+							: t("header.upstreamMany", { count: upstreamCommits })}
 					</Button>
 				</Tooltip>
 			{:else}
 				<div class="chrome-you-are-up-to-date">
 					<Icon name="tick" />
-					<span class="text-12">You’re up to date</span>
+					<span class="text-12">{t("header.upToDate")}</span>
 				</div>
 			{/if}
 		</div>
@@ -271,7 +274,7 @@
 								}
 							}}
 						>
-							Add local repository
+							{t("header.addLocal")}
 						</SelectItem>
 					{/if}
 					<SelectItem
@@ -280,23 +283,23 @@
 							goto("/onboarding/clone");
 						}}
 					>
-						Clone repository
+						{t("header.clone")}
 					</SelectItem>
 				</OptionsGroup>
 
 				<div class="text-11 new-window-hint">
 					<Icon name="open-in-folder" color="var(--text-3)" size={14} />
-					<span>Hold {newWindowModifierLabel} to open in a new window</span>
+					<span>{t("header.newWindow", { modifier: newWindowModifierLabel })}</span>
 				</div>
 			</Select>
 			{#if singleBranchMode}
-				<Tooltip text="Current branch">
+				<Tooltip text={t("header.currentBranch")}>
 					<div class="chrome-current-branch" data-testid={TestId.ChromeHeaderCurrentBranch}>
 						<div class="chrome-current-branch__content">
 							<Icon name="branch" color="var(--text-2)" />
 							<span class="text-12 text-bold clr-text-2 truncate">{currentBranchName}</span>
 							{#if isNotInWorkspace}
-								<span class="text-12 text-bold clr-text-2 op-60"> read-only </span>
+								<span class="text-12 text-bold clr-text-2 op-60"> {t("header.readOnly")} </span>
 							{/if}
 						</div>
 					</div>
@@ -305,7 +308,7 @@
 		</div>
 
 		{#if currentMode && isNotInWorkspace}
-			<Tooltip text="Switch back to gitbutler/workspace">
+			<Tooltip text={t("header.switchBack")}>
 				<Button
 					kind="outline"
 					testId={TestId.ChromeHeaderSwitchBackToWorkspaceButton}
@@ -315,7 +318,7 @@
 					reversedDirection
 					disabled={workspaceSwitch.current.isLoading}
 				>
-					Back to workspace
+					{t("header.backToWorkspace")}
 				</Button>
 			</Tooltip>
 		{/if}
@@ -331,7 +334,7 @@
 				reversedDirection
 				onclick={() => createBranchModal?.show()}
 			>
-				Create branch
+				{t("header.createBranch")}
 			</Button>
 		{/if}
 	</div>

@@ -8,6 +8,7 @@
 
 <script lang="ts">
 	import BranchNameTextbox from "$components/branch/BranchNameTextbox.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, Modal, TestId } from "@gitbutler/ui-svelte";
@@ -50,12 +51,12 @@
 	testId={TestId.BranchHeaderAddDependanttBranchModal}
 	bind:this={modal}
 	width="small"
-	title="Add dependent branch"
+	title={t("branchAct.addDependent")}
 	onSubmit={handleAddDependentBranch}
 >
 	<div class="content-wrap">
 		<BranchNameTextbox
-			placeholder="Branch name"
+			placeholder={t("branchAct.branchName")}
 			bind:value={branchName}
 			autofocus
 			onnormalizedvalue={(value) => (normalizedRefName = value)}
@@ -63,13 +64,13 @@
 		/>
 	</div>
 	{#snippet controls(close)}
-		<Button kind="outline" type="reset" onclick={close}>Cancel</Button>
+		<Button kind="outline" type="reset" onclick={close}>{t("general.cancel")}</Button>
 		<Button
 			testId={TestId.BranchHeaderAddDependanttBranchModal_ActionButton}
 			style="pop"
 			type="submit"
 			disabled={!isBranchNameValid}
-			loading={branchCreation.current.isLoading}>Add branch</Button
+			loading={branchCreation.current.isLoading}>{t("branchAct.addBranch")}</Button
 		>
 	{/snippet}
 </Modal>

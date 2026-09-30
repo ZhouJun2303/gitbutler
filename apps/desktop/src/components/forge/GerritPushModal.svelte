@@ -11,6 +11,7 @@
 </script>
 
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import {
 		Button,
 		Modal,
@@ -104,15 +105,15 @@
 	}
 </script>
 
-<Modal bind:this={modal} title="Gerrit push options" width={400} onSubmit={() => handlePush()}>
+<Modal bind:this={modal} title={t("gerritPush.title")} width={400} onSubmit={() => handlePush()}>
 	<div class="push-options">
 		<!-- Status Section -->
 		<Select
-			label="Status"
+			label={t("gerritPush.status")}
 			value={status}
 			options={[
-				{ label: "Ready for review", value: "ready" },
-				{ label: "Work in progress", value: "wip" },
+				{ label: t("gerritPush.ready"), value: "ready" },
+				{ label: t("gerritPush.wip"), value: "wip" },
 			]}
 			onselect={(value) => {
 				status = value as "ready" | "wip";
@@ -127,19 +128,19 @@
 
 		<!-- Topic Section -->
 		<Textbox
-			label="Topic"
+			label={t("gerritPush.topic")}
 			bind:value={topicValue}
 			oninput={handleTopicInput}
-			placeholder="Enter topic name"
+			placeholder={t("gerritPush.topicPlaceholder")}
 			wide
 		/>
 
 		<!-- Tags Section -->
 		<TagInput
-			label="Tags"
+			label={t("gerritPush.tags")}
 			bind:tags
 			bind:value={tagInputValue}
-			helperText="Add tags separated by spaces or commas"
+			helperText={t("gerritPush.tagsHelp")}
 			wide
 		/>
 	</div>
@@ -147,11 +148,11 @@
 	{#snippet controls(close)}
 		<label class="toggle-wrapper">
 			<Toggle id="private-toggle" bind:checked={isPrivate} />
-			<span class="text-13 text-body clr-text-2">Mark as private 🔒</span>
+			<span class="text-13 text-body clr-text-2">{t("gerritPush.private")}</span>
 		</label>
 		<div class="flex-1 flex justify-end gap-8">
-			<Button kind="outline" onclick={close}>Cancel</Button>
-			<Button style="pop" type="submit" disabled={!canPush}>Push</Button>
+			<Button kind="outline" onclick={close}>{t("general.cancel")}</Button>
+			<Button style="pop" type="submit" disabled={!canPush}>{t("push.push")}</Button>
 		</div>
 	{/snippet}
 </Modal>

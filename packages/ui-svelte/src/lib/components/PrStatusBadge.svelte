@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	import Badge from "$components/Badge.svelte";
+	import { uiText } from "$lib/i18n/locale.svelte";
 	import { type IconName } from "$lib/icons/names";
 	import type { ComponentColorType } from "$lib/utils/colorTypes";
 
@@ -22,15 +23,15 @@
 	const prStatusInfo: StatusInfo = $derived.by(() => {
 		switch (status) {
 			case "loading":
-				return { text: "Loading...", icon: "spinner", style: "gray" };
+				return { text: uiText("pr.loading"), icon: "spinner", style: "gray" };
 			case "merged":
-				return { text: "Merged", icon: "pr-tick", style: "purple" };
+				return { text: uiText("pr.merged"), icon: "pr-tick", style: "purple" };
 			case "closed":
-				return { text: "Closed", icon: "pr-cross", style: "danger" };
+				return { text: uiText("pr.closed"), icon: "pr-cross", style: "danger" };
 			case "draft":
-				return { text: "Draft", icon: "pr-draft", style: "gray" };
+				return { text: uiText("pr.draft"), icon: "pr-draft", style: "gray" };
 			default:
-				return { text: "Open", icon: "pr", style: "safe" };
+				return { text: uiText("pr.open"), icon: "pr", style: "safe" };
 		}
 	});
 </script>

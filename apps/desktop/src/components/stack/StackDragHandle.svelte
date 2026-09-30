@@ -1,5 +1,6 @@
 <script lang="ts">
 	import CollapseStackButton from "$components/branch/CollapseStackButton.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
@@ -107,7 +108,7 @@
 			{#if isOpenWorkspace}
 				<ContextMenuSection>
 					<ContextMenuItem
-						label="Move to leftmost"
+						label={t("stack.moveLeft")}
 						icon="leftmost-lane"
 						disabled={!canMoveLeft}
 						onclick={() => {
@@ -116,7 +117,7 @@
 						}}
 					/>
 					<ContextMenuItem
-						label="Move to rightmost"
+						label={t("stack.moveRight")}
 						icon="rightmost-lane"
 						disabled={!canMoveRight}
 						onclick={() => {
@@ -128,10 +129,10 @@
 			{/if}
 			<ContextMenuSection>
 				<ContextMenuItem
-					label="Unapply stack"
+					label={t("branchMenu.unapply")}
 					icon="eject"
 					disabled={!isOpenWorkspace}
-					caption={!isOpenWorkspace ? "Only available in workspace mode" : undefined}
+					caption={!isOpenWorkspace ? t("branchMenu.onlyWorkspace") : undefined}
 					onclick={() => {
 						unapplyStack();
 						close();

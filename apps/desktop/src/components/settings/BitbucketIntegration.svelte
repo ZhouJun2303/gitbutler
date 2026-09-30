@@ -3,6 +3,7 @@
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import bitbucketLogoSvg from "$lib/assets/unsized-logos/bitbucket.svg?raw";
 	import { BITBUCKET_USER_SERVICE } from "$lib/forge/bitbucket/bitbucketUserService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { OnboardingEvent, POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
 	import { inject } from "@gitbutler/core/context";
 
@@ -21,14 +22,21 @@
 	let emailInput = $state<string>();
 	let tokenInput = $state<string>();
 	let emailError = $state<string>();
-	let tokenError = $state<string>();
+	let tokenErrorKind = $state<"missingScopes" | "invalidEmail" | undefined>();
+	const tokenError = $derived(
+		tokenErrorKind === "missingScopes"
+			? t("integration.missingScopes")
+			: tokenErrorKind === "invalidEmail"
+				? t("integration.invalidEmail")
+				: undefined,
+	);
 
 	function cleanupApiTokenFlow() {
 		showingFlow = undefined;
 		emailInput = undefined;
 		tokenInput = undefined;
 		emailError = undefined;
-		tokenError = undefined;
+		tokenErrorKind = undefined;
 	}
 
 	async function deleteAllBitbucketAccounts() {
@@ -43,7 +51,7 @@
 	async function storeBitbucketApiToken() {
 		if (!emailInput || !tokenInput) return;
 		emailError = undefined;
-		tokenError = undefined;
+		tokenErrorKind = undefined;
 		try {
 			await storeApiToken({ email: emailInput, accessToken: tokenInput });
 			posthog.captureOnboarding(OnboardingEvent.BitbucketStoreApiToken);
@@ -51,10 +59,8 @@
 		} catch (err: any) {
 			console.error("Failed to store Bitbucket API token:", err);
 			const message = String(err?.message ?? err);
-			tokenError =
-				message.includes("403") || message.includes("Forbidden")
-					? "Token is missing required scopes - make sure read:user:bitbucket is granted."
-					: "Invalid email/token or network error";
+			tokenErrorKind =
+				message.includes("403") || message.includes("Forbidden") ? "missingScopes" : "invalidEmail";
 			posthog.captureOnboarding(OnboardingEvent.BitbucketStoreApiTokenFailed);
 		}
 	}
@@ -67,12 +73,12 @@
 			{#snippet error()}
 				<CardGroup.Item>
 					{#snippet title()}
-						Failed to load Bitbucket accounts
+						{t("integration.bitbucketLoadFailed")}
 					{/snippet}
 					<Button
 						style="pop"
 						onclick={deleteAllBitbucketAccounts}
-						loading={clearingAllResult.current.isLoading}>Try again</Button
+						loading={clearingAllResult.current.isLoading}>{t("integration.tryAgain")}</Button
 					>
 				</CardGroup.Item>
 			{/snippet}
@@ -96,7 +102,7 @@
 					{/snippet}
 
 					{#snippet caption()}
-						Allows you to create Pull Requests
+						{t("integration.allowsPr")}
 					{/snippet}
 
 					{#snippet actions()}
@@ -113,20 +119,19 @@
 			<CardGroup>
 				<CardGroup.Item>
 					{#snippet title()}
-						Add Atlassian API Token
+						{t("integration.addBitbucket")}
 					{/snippet}
 
 					{#snippet caption()}
-						Requires read:user:bitbucket, read:repository:bitbucket, read:pullrequest:bitbucket, and
-						write:pullrequest:bitbucket.
+						{t("integration.bitbucketScopes")}
 						<br />
 						<Link href="https://id.atlassian.com/manage-profile/security/api-tokens"
-							>Create one on id.atlassian.com</Link
+							>{t("integration.bitbucketCreate")}</Link
 						>
 					{/snippet}
 
 					<Textbox
-						label="Atlassian account email"
+						label={t("integration.atlassianEmail")}
 						size="large"
 						value={emailInput}
 						placeholder="you@example.com"
@@ -134,7 +139,7 @@
 						error={emailError}
 					/>
 					<Textbox
-						label="API token"
+						label={t("integration.apiToken")}
 						size="large"
 						type="password"
 						value={tokenInput}
@@ -145,14 +150,16 @@
 				</CardGroup.Item>
 				<CardGroup.Item>
 					<div class="flex justify-end gap-6">
-						<Button style="gray" kind="outline" onclick={cleanupApiTokenFlow}>Cancel</Button>
+						<Button style="gray" kind="outline" onclick={cleanupApiTokenFlow}
+							>{t("general.cancel")}</Button
+						>
 						<Button
 							style="pop"
 							disabled={!emailInput || !tokenInput}
 							loading={storeApiTokenResult.current.isLoading}
 							onclick={storeBitbucketApiToken}
 						>
-							Add account
+							{t("integration.addAccount")}
 						</Button>
 					</div>
 				</CardGroup.Item>
@@ -162,7 +169,7 @@
 </div>
 
 <p class="text-12 text-body bitbucket-integration-settings__text">
-	🔒 Credentials are persisted locally in your OS Keychain / Credential Manager.
+	🔒 {t("integration.keychain")}
 </p>
 
 {#snippet addProfileButton(noAccounts: boolean)}
@@ -171,7 +178,7 @@
 		disabled={showingFlow !== undefined}
 		loading={storeApiTokenResult.current.isLoading}
 		menuItems={[
-			{ label: "Add Atlassian API Token", icon: "lock-auth", onclick: startApiTokenFlow },
+			{ label: t("integration.addBitbucket"), icon: "lock-auth", onclick: startApiTokenFlow },
 		]}
 	/>
 {/snippet}

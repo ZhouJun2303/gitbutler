@@ -10,10 +10,12 @@
 	import SettingsModalLayout from "$components/settings/SettingsModalLayout.svelte";
 	import TelemetrySettings from "$components/settings/TelemetrySettings.svelte";
 	import { URL_SERVICE } from "$lib/backend/url";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { generalSettingsPages } from "$lib/settings/generalSettingsPages";
 	import { USER_SERVICE } from "$lib/user/userService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Icon } from "@gitbutler/ui-svelte";
+	import type { MessageKey } from "$lib/i18n/messages";
 	import type { GeneralSettingsModalState, GeneralSettingsPageId } from "$lib/state/uiState.svelte";
 
 	type Props = {
@@ -25,6 +27,25 @@
 	const userService = inject(USER_SERVICE);
 	const urlService = inject(URL_SERVICE);
 
+	const pageLabelKey = {
+		general: "settings.page.general",
+		appearance: "settings.page.appearance",
+		"lanes-and-branches": "settings.page.lanes",
+		git: "settings.page.git",
+		integrations: "settings.page.integrations",
+		ai: "settings.page.ai",
+		telemetry: "settings.page.telemetry",
+		experimental: "settings.page.experimental",
+		organizations: "settings.page.organizations",
+	} as const satisfies Record<(typeof generalSettingsPages)[number]["id"], MessageKey>;
+
+	const pages = $derived(
+		generalSettingsPages.map((page) => ({
+			...page,
+			label: t(pageLabelKey[page.id]),
+		})),
+	);
+
 	let currentSelectedId = $derived(data.selectedId || generalSettingsPages[0]!.id);
 
 	function selectPage(pageId: GeneralSettingsPageId) {
@@ -33,8 +54,8 @@
 </script>
 
 <SettingsModalLayout
-	title="Global settings"
-	pages={generalSettingsPages}
+	title={t("settings.globalTitle")}
+	{pages}
 	selectedId={currentSelectedId}
 	isAdmin={userService.user?.role === "admin"}
 	onSelectPage={selectPage}
@@ -60,10 +81,10 @@
 			{:else if currentPage.id === "organizations"}
 				<OrganisationSettings />
 			{:else}
-				Settings page {currentPage.id} not Found.
+				{t("settings.notFound").replace("{page}", currentPage.id)}
 			{/if}
 		{:else}
-			Settings page {currentSelectedId} not Found.
+			{t("settings.notFound").replace("{page}", currentSelectedId)}
 		{/if}
 	{/snippet}
 
@@ -75,7 +96,7 @@
 				onclick={async () => await urlService.openExternalUrl("https://docs.gitbutler.com/")}
 			>
 				<Icon name="docs" />
-				<span class="text-13 text-bold">Docs</span>
+				<span class="text-13 text-bold">{t("settings.docs")}</span>
 				<div class="text-13 open-link-icon">↗</div>
 			</button>
 			<button
@@ -84,7 +105,7 @@
 				onclick={async () => await urlService.openExternalUrl("https://discord.gg/MmFkmaJ42D")}
 			>
 				<Icon name="discord" />
-				<span class="text-13 text-bold">Our Discord</span>
+				<span class="text-13 text-bold">{t("settings.discord")}</span>
 				<div class="text-13 open-link-icon">↗</div>
 			</button>
 		</div>

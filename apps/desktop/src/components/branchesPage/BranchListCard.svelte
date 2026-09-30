@@ -3,6 +3,7 @@
 	import { BRANCH_SERVICE } from "$lib/branches/branchService.svelte";
 	import { GIT_CONFIG_SERVICE } from "$lib/config/gitConfigService";
 	import { getPrStatus } from "$lib/forge/interface/prUtils";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { useUserAvatarUrl } from "$lib/user/userAvatar.svelte";
 	import { inject } from "@gitbutler/core/context";
 
@@ -114,7 +115,7 @@
 			<SeriesLabelsRow series={filteredStackBranches} />
 			{#if branchListing.stack?.inWorkspace}
 				<div class="sidebar-entry__applied-tag">
-					<span class="text-10 text-semibold">Workspace</span>
+					<span class="text-10 text-semibold">{t("list.workspace")}</span>
 				</div>
 			{/if}
 		</div>
@@ -142,12 +143,12 @@
 			{/each}
 
 			{#if branchListing.hasLocal}
-				<span class="truncate">local</span>
+				<span class="truncate">{t("list.local")}</span>
 				<span class="sidebar-entry__divider">•</span>
 			{/if}
 
 			{#if branchListing.remotes.length === 0 && !branchListing.hasLocal}
-				<span class="truncate">No remotes</span>
+				<span class="truncate">{t("list.noRemotes")}</span>
 			{/if}
 		</div>
 	{/snippet}

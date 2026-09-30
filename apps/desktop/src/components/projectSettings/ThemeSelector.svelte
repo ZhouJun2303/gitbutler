@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Icon } from "@gitbutler/ui-svelte";
+	import type { MessageKey } from "$lib/i18n/messages";
 	import type { AppTheme, UiState } from "$lib/state/uiState.svelte";
 
 	interface Props {
@@ -10,19 +12,19 @@
 
 	const currentTheme = $derived(uiState.global.theme.current ?? "system");
 
-	const themes: { name: string; value: AppTheme; preview: string }[] = [
+	const themes: { nameKey: MessageKey; value: AppTheme; preview: string }[] = [
 		{
-			name: "Light",
+			nameKey: "appearance.theme.light",
 			value: "light",
 			preview: "/images/theme-previews/light.svg",
 		},
 		{
-			name: "Dark",
+			nameKey: "appearance.theme.dark",
 			value: "dark",
 			preview: "/images/theme-previews/dark.svg",
 		},
 		{
-			name: "System preference",
+			nameKey: "appearance.theme.system",
 			value: "system",
 			preview: "/images/theme-previews/system.svg",
 		},
@@ -52,10 +54,10 @@
 					/></i
 				>
 
-				<img src={theme.preview} alt={theme.name} />
+				<img src={theme.preview} alt={t(theme.nameKey)} />
 			</div>
 
-			<span class="theme-card__label text-12 text-semibold">{theme.name}</span>
+			<span class="theme-card__label text-12 text-semibold">{t(theme.nameKey)}</span>
 		</label>
 	{/each}
 </fieldset>

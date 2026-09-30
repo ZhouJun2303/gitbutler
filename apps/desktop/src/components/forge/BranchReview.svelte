@@ -5,6 +5,7 @@
 	import ReviewCreationControls from "$components/forge/ReviewCreationControls.svelte";
 	import StackedPullRequestCard from "$components/forge/StackedPullRequestCard.svelte";
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, Modal } from "@gitbutler/ui-svelte";
 	import type { Segment } from "@gitbutler/but-sdk";
@@ -68,25 +69,26 @@
 	<Modal
 		width="small"
 		type="warning"
-		title="Create {reviewUnitName}"
+		title={t("review.createNamed", { name: reviewUnitName })}
 		bind:this={confirmCreatePrModal}
 		onSubmit={() => {
 			modal?.show();
 		}}
 	>
 		<p class="text-13 text-body helper-text">
-			It's strongly recommended to create {reviewUnitName.toLowerCase()}s starting with the branch
-			at the base of the stack.
+			{t("review.baseWarning", { name: reviewUnitName })}
 			<br />
-			Do you still want to create this {reviewUnitName.toLowerCase()}?
+			{t("review.stillCreate", { name: reviewUnitName })}
 		</p>
 		{#snippet controls(close)}
-			<Button kind="outline" onclick={close}>Cancel</Button>
-			<Button style="warning" type="submit">Create {reviewUnitName}</Button>
+			<Button kind="outline" onclick={close}>{t("general.cancel")}</Button>
+			<Button style="warning" type="submit"
+				>{t("review.createNamed", { name: reviewUnitName })}</Button
+			>
 		{/snippet}
 	</Modal>
 
-	<Modal bind:this={modal} title="Submit changes for review">
+	<Modal bind:this={modal} title={t("review.submit")}>
 		<ReviewCreation
 			bind:this={reviewCreation}
 			{projectId}

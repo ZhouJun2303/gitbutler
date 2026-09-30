@@ -7,6 +7,7 @@
 		gitLabHostError,
 		GITLAB_USER_SERVICE,
 	} from "$lib/forge/gitlab/gitlabUserService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { OnboardingEvent, POSTHOG_WRAPPER } from "$lib/telemetry/posthog";
 	import { inject } from "@gitbutler/core/context";
 
@@ -65,7 +66,7 @@
 			cleanupPatFlow();
 		} catch (err: any) {
 			console.error("Failed to store GitLab PAT:", err);
-			patError = "Invalid token or network error";
+			patError = t("integration.invalidToken");
 			posthog.captureOnboarding(OnboardingEvent.GitLabStorePatFailed);
 		}
 	}
@@ -98,12 +99,12 @@
 			{#snippet error()}
 				<CardGroup.Item>
 					{#snippet title()}
-						Failed to load GitLab accounts
+						{t("integration.gitlabLoadFailed")}
 					{/snippet}
 					<Button
 						style="pop"
 						onclick={deleteAllGitLabAccounts}
-						loading={clearingAllResult.current.isLoading}>Try again</Button
+						loading={clearingAllResult.current.isLoading}>{t("integration.tryAgain")}</Button
 					>
 				</CardGroup.Item>
 			{/snippet}
@@ -127,7 +128,7 @@
 					{/snippet}
 
 					{#snippet caption()}
-						Allows you to create Merge Requests
+						{t("integration.allowsMr")}
 					{/snippet}
 
 					{#snippet actions()}
@@ -144,7 +145,7 @@
 			<CardGroup>
 				<CardGroup.Item>
 					{#snippet title()}
-						Add Personal Access Token
+						{t("integration.addPat")}
 					{/snippet}
 
 					<Textbox
@@ -158,14 +159,16 @@
 				</CardGroup.Item>
 				<CardGroup.Item>
 					<div class="flex justify-end gap-6">
-						<Button style="gray" kind="outline" onclick={cleanupPatFlow}>Cancel</Button>
+						<Button style="gray" kind="outline" onclick={cleanupPatFlow}
+							>{t("general.cancel")}</Button
+						>
 						<Button
 							style="pop"
 							disabled={!patInput}
 							loading={storePatResult.current.isLoading}
 							onclick={storePersonalAccessToken}
 						>
-							Add account
+							{t("integration.addAccount")}
 						</Button>
 					</div>
 				</CardGroup.Item>
@@ -176,27 +179,27 @@
 			<CardGroup>
 				<CardGroup.Item>
 					{#snippet title()}
-						Add Self-Hosted GitLab Account
+						{t("integration.addGitlabSelf")}
 					{/snippet}
 
 					{#snippet caption()}
-						To connect to your self-hosted GitLab API, allow-list it in the app's CSP settings.
+						{t("integration.gitlabCsp")}
 						<br />
-						See <Link href="https://docs.gitbutler.com/troubleshooting/custom-csp"
-							>docs for details</Link
+						<Link href="https://docs.gitbutler.com/troubleshooting/custom-csp"
+							>{t("integration.docsDetails")}</Link
 						>
 					{/snippet}
 
 					<Textbox
-						label="API Base URL"
+						label={t("integration.apiBase")}
 						size="large"
 						value={selfHostedHostInput}
 						oninput={(value) => (selfHostedHostInput = value)}
-						helperText="This should be the root URL of the API. For example, if your GitLab instance's hostname is gitlab.acme-inc.com, then set the base URL to https://gitlab.acme-inc.com"
+						helperText={t("integration.gitlabApiHelp")}
 						error={selfHostedHostError}
 					/>
 					<Textbox
-						label="Personal Access Token"
+						label={t("forge.pat")}
 						placeholder="glpat-************************"
 						size="large"
 						type="password"
@@ -207,14 +210,16 @@
 				</CardGroup.Item>
 				<CardGroup.Item>
 					<div class="flex justify-end gap-6">
-						<Button style="gray" kind="outline" onclick={cleanupSelfHostedFlow}>Cancel</Button>
+						<Button style="gray" kind="outline" onclick={cleanupSelfHostedFlow}
+							>{t("general.cancel")}</Button
+						>
 						<Button
 							style="pop"
 							disabled={!selfHostedHostInput || !selfHostedPatInput}
 							loading={storeSelfHostedPatResult.current.isLoading}
 							onclick={storeSelfHostedToken}
 						>
-							Add account
+							{t("integration.addAccount")}
 						</Button>
 					</div>
 				</CardGroup.Item>
@@ -229,9 +234,9 @@
 		disabled={showingFlow !== undefined}
 		loading={storePatResult.current.isLoading || storeSelfHostedPatResult.current.isLoading}
 		menuItems={[
-			{ label: "Add Personal Access Token", icon: "lock-auth", onclick: startPatFlow },
+			{ label: t("integration.addPat"), icon: "lock-auth", onclick: startPatFlow },
 			{
-				label: "Add Self-Hosted GitLab Account",
+				label: t("integration.addGitlabSelf"),
 				icon: "factory",
 				onclick: startSelfHostedFlow,
 			},

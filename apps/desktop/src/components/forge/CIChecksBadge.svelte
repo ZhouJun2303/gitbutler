@@ -3,6 +3,7 @@
 	import { CHECKS_MONITOR } from "$lib/forge/checksMonitor.svelte";
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
 	import { createPollBackoff } from "$lib/forge/shared/pollErrorBackoff.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
 	import { inject } from "@gitbutler/core/context";
 
@@ -84,9 +85,9 @@
 			return {
 				style: "gray",
 				icon: undefined,
-				text: "No PR checks",
-				reducedText: "No checks",
-				tooltip: "Checks for forked repos only available on the web.",
+				text: t("checks.noPr"),
+				reducedText: t("checks.noChecks"),
+				tooltip: t("checks.forkOnly"),
 			};
 		}
 
@@ -98,11 +99,9 @@
 			return {
 				style: "danger",
 				icon: "warning",
-				text: "Failed to load checks",
-				reducedText: "Error",
-				tooltip: classified.terminal
-					? classified.message
-					: "Failed to load checks. Click to retry.",
+				text: t("checks.loadFailed"),
+				reducedText: t("checks.error"),
+				tooltip: classified.terminal ? classified.message : t("checks.retry"),
 			};
 		}
 
@@ -113,9 +112,9 @@
 				return {
 					style: "warning",
 					icon: "eye",
-					text: "Needs review",
-					reducedText: "Needs review",
-					tooltip: "Checks passed but the PR still needs approval.",
+					text: t("checks.needsReview"),
+					reducedText: t("checks.needsReview"),
+					tooltip: t("checks.passedNeedsApproval"),
 				};
 			}
 
@@ -124,9 +123,11 @@
 				return {
 					style: "warning",
 					icon: "warning",
-					text: "Action required",
-					reducedText: "Action",
-					tooltip: checksList ? `Action required: ${checksList}` : "Action required.",
+					text: t("checks.actionRequired"),
+					reducedText: t("checks.action"),
+					tooltip: checksList
+						? t("checks.actionList", { list: checksList })
+						: t("checks.actionRequiredDot"),
 				};
 			}
 
@@ -135,9 +136,9 @@
 				return {
 					style: "danger",
 					icon: "warning",
-					text: "Has conflicts",
-					reducedText: "Conflicts",
-					tooltip: "The PR has merge conflicts that need to be resolved.",
+					text: t("checks.hasConflicts"),
+					reducedText: t("checks.conflicts"),
+					tooltip: t("checks.conflictsTooltip"),
 				};
 			}
 
@@ -146,34 +147,38 @@
 			const icon = checks.completed ? (checks.success ? "tick" : "danger") : "spinner";
 			const text = checks.completed
 				? checks.success
-					? "Checks passed"
-					: "Checks failed"
-				: "Checks running";
+					? t("checks.passed")
+					: t("checks.failed")
+				: t("checks.running");
 
 			const tooltip =
 				checks.completed && !checks.success
-					? `Checks failed: ${checks.failedChecks.join(", ")}`
+					? t("checks.failedList", { list: checks.failedChecks.join(", ") })
 					: undefined;
 
-			const reducedText = checks.completed ? (checks.success ? "Passed" : "Failed") : "Running";
+			const reducedText = checks.completed
+				? checks.success
+					? t("checks.passedShort")
+					: t("checks.failedShort")
+				: t("checks.runningShort");
 			return { style, icon, text, reducedText, tooltip };
 		}
 		if (loading) {
 			return {
 				style: "gray",
 				icon: "spinner",
-				text: "Loading checks",
-				reducedText: "Checks",
-				tooltip: "Waiting for checks to start…",
+				text: t("checks.loading"),
+				reducedText: t("checks.checks"),
+				tooltip: t("checks.waiting"),
 			};
 		}
 
 		return {
 			style: "gray",
 			icon: undefined,
-			text: "No checks configured",
-			reducedText: "No checks",
-			tooltip: "No CI checks are configured.",
+			text: t("checks.none"),
+			reducedText: t("checks.noChecks"),
+			tooltip: t("checks.noneTooltip"),
 		};
 	});
 

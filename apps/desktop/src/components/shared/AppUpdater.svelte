@@ -1,5 +1,6 @@
 <script lang="ts">
 	import AppScrollableContainer from "$components/shared/AppScrollableContainer.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UPDATER_SERVICE, type InstallStatus } from "$lib/updater/updater";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, Modal, Markdown } from "@gitbutler/ui-svelte";
@@ -99,27 +100,27 @@
 
 		<h4 class="text-13 text-semibold update-banner__status">
 			{#if status === "Up-to-date"}
-				You are up-to-date!
+				{t("updater.current")}
 			{:else if status === "Downloading"}
-				Downloading update…
+				{t("updater.downloading")}
 			{:else if status === "Downloaded"}
-				Update downloaded
+				{t("updater.downloaded")}
 			{:else if status === "Installing"}
-				Installing update…
+				{t("updater.installing")}
 			{:else if status === "Done"}
-				Install complete
+				{t("updater.done")}
 			{:else if status === "Checking"}
-				Checking for update…
+				{t("updater.checking")}
 			{:else if status === "Error"}
-				Error occurred
+				{t("updater.error")}
 			{:else if version}
-				New version available
+				{t("updater.available")}
 			{/if}
 		</h4>
 
 		<div class="buttons">
 			{#if releaseNotes}
-				<Button kind="outline" onclick={handleOpenModal}>Release notes</Button>
+				<Button kind="outline" onclick={handleOpenModal}>{t("updater.notes")}</Button>
 			{/if}
 			{#if !inFlatpak}
 				<div class="status-section">
@@ -136,7 +137,7 @@
 									await updaterService.downloadAndInstall();
 								}}
 							>
-								Update to {version}
+								{t("updater.updateTo", { version })}
 							</Button>
 						{:else if status === "Up-to-date"}
 							<Button
@@ -147,7 +148,7 @@
 									updaterService.dismiss();
 								}}
 							>
-								Got it!
+								{t("updater.gotIt")}
 							</Button>
 						{:else if status === "Done"}
 							<Button
@@ -156,7 +157,7 @@
 								testId="restart-app"
 								onclick={async () => await updaterService.relaunchApp()}
 							>
-								Restart
+								{t("updater.restart")}
 							</Button>
 						{/if}
 					</div>
@@ -172,12 +173,13 @@
 			<div class="p-16">
 				{#if loadingReleases}
 					<div class="loading-state">
-						<p class="text-12">Loading releases...</p>
+						<p class="text-12">{t("updater.loading")}</p>
 					</div>
 				{:else}
 					<div class="release-notes-header">
 						<h3 class="text-15 text-bold">
-							<span class="text-12 m-r-4">📒</span> Release Notes - {displayVersion}
+							<span class="text-12 m-r-4">📒</span>
+							{t("updater.notesTitle", { version: displayVersion })}
 						</h3>
 
 						<div class="flex gap-2">
@@ -203,7 +205,7 @@
 					</div>
 
 					<div class="text-12 text-body release-notes-content">
-						<Markdown content={displayNotes || "No release notes available"} />
+						<Markdown content={displayNotes || t("updater.noNotes")} />
 					</div>
 				{/if}
 			</div>
