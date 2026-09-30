@@ -18,7 +18,7 @@ use but_api::{
 };
 use but_settings::AppSettingsWithDiskSync;
 use gitbutler_tauri::{
-    WindowState, askpass, csp::csp_with_extras, env, logs, menu, projects, settings, zip,
+    WindowState, ai_proxy, askpass, csp::csp_with_extras, env, logs, menu, projects, settings, zip,
 };
 use tauri::{Emitter, Manager, generate_context};
 use tauri_plugin_deep_link::DeepLinkExt;
@@ -350,6 +350,7 @@ fn main() -> anyhow::Result<()> {
                 #[cfg(unix)]
                 legacy::workspace::tauri_show_graph_svg::show_graph_svg,
                 askpass::submit_prompt_response,
+                ai_proxy::proxy_ai_fetch,
                 projects::list_projects,
                 projects::server_capabilities,
                 projects::set_project_active,
