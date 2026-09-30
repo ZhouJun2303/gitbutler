@@ -8,6 +8,7 @@
 	import { PR_SERVICE } from "$lib/forge/prService.svelte";
 	import { REPO_SERVICE } from "$lib/forge/repoService.svelte";
 	import { createPollBackoff } from "$lib/forge/shared/pollErrorBackoff.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import {
 		Button,
@@ -200,21 +201,23 @@
 			>
 				<ContextMenuSection>
 					<ContextMenuItem
-						label="Open in browser"
+						label={t("commitMenu.openBrowser")}
 						onclick={() => {
 							contextMenuOpen = false;
 							urlService.openExternalUrl(pr.htmlUrl);
 						}}
 					/>
 					<ContextMenuItem
-						label="Copy link"
+						label={t("pr.copyLink")}
 						onclick={() => {
 							contextMenuOpen = false;
-							clipboardService.write(pr.htmlUrl, { message: `${abbr} link copied` });
+							clipboardService.write(pr.htmlUrl, {
+								message: t("pr.linkCopied", { abbr }),
+							});
 						}}
 					/>
 					<ContextMenuItem
-						label="Refetch status"
+						label={t("pr.refetch")}
 						onclick={() => {
 							contextMenuOpen = false;
 							prService.fetch(projectId, pr.number, { forceRefetch: true });
@@ -226,7 +229,7 @@
 					/>
 					{#if !pr.closedAt && !pr.mergedAt}
 						<ContextMenuItem
-							label={pr.draft ? "Ready for review" : "Convert to draft"}
+							label={pr.draft ? t("pr.ready") : t("pr.toDraft")}
 							disabled={draftToggling}
 							onclick={async () => {
 								contextMenuOpen = false;
@@ -238,17 +241,19 @@
 				{#if hasChecks}
 					<ContextMenuSection>
 						<ContextMenuItem
-							label="Open checks"
+							label={t("pr.openChecks")}
 							onclick={() => {
 								contextMenuOpen = false;
 								urlService.openExternalUrl(`${pr.htmlUrl}/checks`);
 							}}
 						/>
 						<ContextMenuItem
-							label="Copy checks"
+							label={t("pr.copyChecks")}
 							onclick={() => {
 								contextMenuOpen = false;
-								clipboardService.write(`${pr.htmlUrl}/checks`, { message: "Checks link copied" });
+								clipboardService.write(`${pr.htmlUrl}/checks`, {
+									message: t("pr.checksCopied"),
+								});
 							}}
 						/>
 					</ContextMenuSection>
@@ -273,16 +278,18 @@
 					kind="outline"
 					size="tag"
 					icon="copy"
-					tooltip="Copy {abbr} link"
+					tooltip={t("pr.copyAbbr", { abbr })}
 					onclick={() => {
-						clipboardService.write(pr.htmlUrl, { message: `${abbr} link copied` });
+						clipboardService.write(pr.htmlUrl, {
+							message: t("pr.linkCopied", { abbr }),
+						});
 					}}
 				/>
 				<Button
 					kind="outline"
 					size="tag"
 					icon="arrow-up-righ"
-					tooltip="Open {abbr} in browser"
+					tooltip={t("pr.openAbbr", { abbr })}
 					onclick={() => {
 						urlService.openExternalUrl(pr.htmlUrl);
 					}}

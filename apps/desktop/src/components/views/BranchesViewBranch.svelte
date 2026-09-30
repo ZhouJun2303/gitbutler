@@ -6,6 +6,7 @@
 	import ChangedFilesPanel from "$components/files/ChangedFilesPanel.svelte";
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import { commitCommittedAt } from "$lib/branches/v3";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { createCommitSelection } from "$lib/selection/key";
 	import { getColorFromPushStatus, pushStatusToIcon } from "$lib/stacks/stack";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -105,7 +106,7 @@
 			<ReduxResult {projectId} {stackId} result={changesQuery.result}>
 				{#snippet children(changesResult)}
 					<ChangedFilesPanel
-						title="Changed files"
+						title={t("workspace.changedFiles")}
 						{projectId}
 						{stackId}
 						draggableFiles

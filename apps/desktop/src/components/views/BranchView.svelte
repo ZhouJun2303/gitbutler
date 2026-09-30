@@ -9,6 +9,7 @@
 	import newBranchSmolSVG from "$lib/assets/empty-state/new-branch-smol.svg?raw";
 	import { commitCommittedAt, commitStateSubject } from "$lib/branches/v3";
 	import { findEarliestConflict } from "$lib/commits/utils";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { editPatch } from "$lib/mode/editPatchUtils";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
@@ -120,7 +121,7 @@
 				kind="ghost"
 				icon="pop-out-bottom-right"
 				size="tag"
-				tooltip="Pop out diff view"
+				tooltip={t("commit.popOut")}
 				onclick={onpopout}
 			/>
 		{/if}

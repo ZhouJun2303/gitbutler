@@ -3,6 +3,7 @@
 	import { BRANCH_SERVICE } from "$lib/branches/branchService.svelte";
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
 	import { LISTING_SERVICE } from "$lib/forge/listingService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, TimeAgo, Icon, TestId } from "@gitbutler/ui-svelte";
 
@@ -41,7 +42,7 @@
 	testId={TestId.SyncButton}
 	kind="outline"
 	width="auto"
-	tooltip="Last fetch from upstream"
+	tooltip={t("sync.lastFetch")}
 	{loading}
 	{disabled}
 	icon="refresh"
@@ -65,11 +66,11 @@
 >
 	<span>
 		{#if loading}
-			Fetching...
+			{t("sync.fetching")}
 		{:else if lastFetched}
 			<TimeAgo date={lastFetched} addSuffix={true} capitalize={true} />
 		{:else}
-			Refetch
+			{t("sync.refetch")}
 		{/if}
 	</span>
 

@@ -170,3 +170,4 @@ export type {
 } from "$components/inputTypes";
 
 export * from "$lib/utils/hunk";
+export { getUiLanguage, setUiLanguage, uiText, type UiLanguage } from "$lib/i18n/locale.svelte";

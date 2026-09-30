@@ -16,6 +16,7 @@
 	import StackDragHandle from "$components/stack/StackDragHandle.svelte";
 	import BranchList from "$components/views/BranchList.svelte";
 	import { stagingBehaviorFeature } from "$lib/config/uiFeatureFlags";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { FILE_SELECTION_MANAGER } from "$lib/selection/fileSelectionManager.svelte";
 	import { createWorktreeSelection, type SelectionId } from "$lib/selection/key";
 	import { UNCOMMITTED_SERVICE } from "$lib/selection/uncommittedService.svelte";
@@ -153,7 +154,7 @@
 				class:dropzone-hovered={dropzoneHovered && changes.current.length === 0}
 			>
 				<WorktreeChanges
-					title="Staged"
+					title={t("workspace.staged")}
 					projectId={controller.projectId}
 					stackId={controller.stackId}
 					mode="assigned"
@@ -175,7 +176,7 @@
 						{#if !controller.isCommitting}
 							<div class="assigned-changes-empty">
 								<p class="text-12 text-body assigned-changes-empty__text">
-									Drop files to stage or commit directly
+									{t("workspace.dropToStage")}
 								</p>
 							</div>
 						{/if}
@@ -207,12 +208,12 @@
 						type="button"
 						wide
 						disabled={controller.isReadOnly || !topBranchName || !!controller.exclusiveAction}
-						tooltip={controller.isReadOnly ? "Read-only mode" : undefined}
+						tooltip={controller.isReadOnly ? t("workspace.readOnly") : undefined}
 						onclick={() => {
 							if (topBranchName) startCommit(topBranchName);
 						}}
 					>
-						Start a commit…
+						{t("workspace.startCommit")}
 					</Button>
 				</div>
 			{:else if controller.isCommitting}

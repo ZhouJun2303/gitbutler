@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { SETTINGS_SERVICE } from "$lib/settings/appSettings";
 	import { inject } from "@gitbutler/core/context";
 	import { CardGroup, Link, TestId, Toggle } from "@gitbutler/ui-svelte";
@@ -11,28 +12,22 @@
 
 <div class="analytics-settings__content">
 	<p class="text-13 text-body analytics-settings__text">
-		GitButler uses telemetry strictly to help us improve the client. We do not collect any personal
-		information, unless explicitly allowed below. <Link href="https://gitbutler.com/privacy">
-			Privacy policy
-		</Link>
+		{t("telemetry.intro")}
+		<Link href="https://gitbutler.com/privacy">{t("telemetry.privacy")}</Link>
 	</p>
 	<p class="text-13 text-body analytics-settings__text">
-		We kindly ask you to consider keeping these settings enabled as it helps us catch issues more
-		quickly. If you choose to disable them, please feel free to share your feedback on our <Link
-			href="https://discord.gg/MmFkmaJ42D"
-		>
-			Discord
-		</Link>.
+		{t("telemetry.ask")}
+		<Link href="https://discord.gg/MmFkmaJ42D">{t("telemetry.discord")}</Link>.
 	</p>
 </div>
 
 <CardGroup testId={TestId.OnboardingPageAnalyticsSettings}>
 	<CardGroup.Item labelFor="errorReportingToggle">
 		{#snippet title()}
-			Error reporting
+			{t("telemetry.errors")}
 		{/snippet}
 		{#snippet caption()}
-			Toggle reporting of application crashes and errors.
+			{t("telemetry.errorsCaption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle
@@ -49,10 +44,10 @@
 
 	<CardGroup.Item labelFor="metricsEnabledToggle">
 		{#snippet title()}
-			Usage metrics
+			{t("telemetry.metrics")}
 		{/snippet}
 		{#snippet caption()}
-			Toggle sharing of usage statistics.
+			{t("telemetry.metricsCaption")}
 		{/snippet}
 		{#snippet actions()}
 			<Toggle

@@ -2,6 +2,7 @@
 	import BranchHeaderIcon from "$components/branch/BranchHeaderIcon.svelte";
 	import { getColorFromCommitState } from "$components/lib";
 	import { type CommitStatusType } from "$lib/commits/commit";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Icon, FileIcon } from "@gitbutler/ui-svelte";
 	import { type DragStateService } from "@gitbutler/ui-svelte/drag/dragStateService.svelte";
 	import { readable } from "svelte/store";
@@ -86,7 +87,7 @@
 			{@render dropLabelSnippet({ label: $dropLabel, amount: childrenAmount })}
 			<div class="draggable-commit-indicator"></div>
 			<div class="truncate text-13 text-semibold draggable-commit-label">
-				{label || "Empty commit"}
+				{label || t("commit.empty")}
 			</div>
 		</div>
 	</div>

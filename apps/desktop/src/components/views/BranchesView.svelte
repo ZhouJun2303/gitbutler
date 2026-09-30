@@ -23,6 +23,7 @@
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
 	import { useGitHubForgeUser } from "$lib/forge/github/hooks.svelte";
 	import { useGitLabForgeUser } from "$lib/forge/gitlab/hooks.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { workspacePath } from "$lib/routes/routes.svelte";
 	import { handleApplyOutcome } from "$lib/stacks/stack";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -184,7 +185,7 @@
 				});
 			}}
 		>
-			Apply to workspace
+			{t("branches.apply")}
 		</AsyncButton>
 		<Button
 			testId={TestId.BranchesViewDeleteLocalBranchButton}
@@ -194,9 +195,9 @@
 				handleDeleteLocalBranch(branchName);
 			}}
 			disabled={!hasLocal}
-			tooltip={hasLocal ? undefined : "No local branch to delete"}
+			tooltip={hasLocal ? undefined : t("branches.noLocalToDelete")}
 		>
-			Delete local
+			{t("branches.deleteLocal")}
 		</Button>
 	</div>
 {/snippet}
@@ -204,7 +205,7 @@
 <Modal
 	testId={TestId.DeleteLocalBranchConfirmationModal}
 	bind:this={deleteLocalBranchModal}
-	title="Delete local branch"
+	title={t("branches.deleteTitle")}
 	width="small"
 	defaultItem={selection.type === "branch" ? selection.branchName : undefined}
 	onSubmit={async (close, branchName: string | undefined) => {
@@ -215,7 +216,7 @@
 	}}
 >
 	{#snippet children(branchName)}
-		<p>Are you sure you want to delete the local changes inside the branch {branchName}?</p>
+		<p>{t("branches.deleteConfirm", { branch: branchName ?? "" })}</p>
 	{/snippet}
 
 	{#snippet controls(close)}
@@ -223,13 +224,13 @@
 			testId={TestId.DeleteLocalBranchConfirmationModal_Cancel}
 			kind="outline"
 			type="reset"
-			onclick={close}>Cancel</Button
+			onclick={close}>{t("branches.cancel")}</Button
 		>
 		<Button
 			testId={TestId.DeleteLocalBranchConfirmationModal_Delete}
 			style="danger"
 			type="submit"
-			icon="bin">Delete</Button
+			icon="bin">{t("branches.delete")}</Button
 		>
 	{/snippet}
 </Modal>
@@ -245,7 +246,7 @@
 				<ReduxResult {projectId} result={baseBranchQuery.result}>
 					{#snippet children(baseBranch)}
 						{@const lastCommit = baseBranch.recentCommits.at(0)}
-						<BranchesListGroup title="Current workspace target">
+						<BranchesListGroup title={t("branches.target")}>
 							<!-- TODO: We need an API for `commitsCount`! -->
 							<CurrentOriginCard
 								originName={baseBranch.branchName}

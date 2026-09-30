@@ -4,6 +4,7 @@
 	import UnassignedFoldButton from "$components/workspace/UnassignedFoldButton.svelte";
 	import noChanges from "$lib/assets/empty-state/no-new-changes.svg?raw";
 	import { stagingBehaviorFeature } from "$lib/config/uiFeatureFlags";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { FILE_SELECTION_MANAGER } from "$lib/selection/fileSelectionManager.svelte";
 	import { createWorktreeSelection } from "$lib/selection/key";
 	import { UNCOMMITTED_SERVICE } from "$lib/selection/uncommittedService.svelte";
@@ -109,7 +110,7 @@
 		<div class="unassigned-wrap">
 			<div role="presentation" class="unassigned-files-wrapper" onclick={unselectFiles}>
 				<WorktreeChanges
-					title="Unstaged"
+					title={t("workspace.unstaged")}
 					{projectId}
 					stackId={undefined}
 					mode="unassigned"
@@ -121,8 +122,8 @@
 						<div class="unassigned-empty">
 							{@html noChanges}
 							<p class="text-13 text-body unassigned-empty-text">
-								You're all caught up!<br />
-								No files need committing
+								{t("workspace.caughtUp")}<br />
+								{t("workspace.noFiles")}
 							</p>
 						</div>
 					{/snippet}
@@ -152,9 +153,9 @@
 						kind="outline"
 					>
 						{#if isCommitting}
-							Committing…
+							{t("workspace.committing")}
 						{:else}
-							Commit to new branch
+							{t("workspace.commitToNewBranch")}
 						{/if}
 					</Button>
 				</div>
@@ -178,7 +179,7 @@
 			<span
 				bind:clientWidth={foldedContentWidth}
 				style="height: {foldedContentWidth}px;"
-				class="unassigned-folded-text text-14 text-semibold">Unstaged</span
+				class="unassigned-folded-text text-14 text-semibold">{t("workspace.unstaged")}</span
 			>
 		</div>
 	</div>

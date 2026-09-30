@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { AI_SERVICE, type DiffInput } from "$lib/ai/service";
 	import { ModelKind } from "$lib/ai/types";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { USER_SERVICE } from "$lib/user/userService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Button, InfoMessage, Link } from "@gitbutler/ui-svelte";
@@ -74,21 +75,19 @@
 			if (!isConfigValid) {
 				if (modelKind === ModelKind.OpenAI || modelKind === ModelKind.Anthropic) {
 					if (isUsingButlerAPI && !userService.user) {
-						throw new Error("Please sign in to use GitButler's AI API");
+						throw new Error(t("ai.signInError"));
 					} else {
-						throw new Error("Please provide a valid API key for your selected AI service");
+						throw new Error(t("ai.invalidKey"));
 					}
 				} else if (modelKind === ModelKind.Ollama) {
 					// Get Ollama configuration for more detailed error
 					const endpoint = await aiService.getOllamaEndpoint();
 					const model = await aiService.getOllamaModelName();
-					throw new Error(
-						`Please check Ollama configuration: endpoint=${endpoint}, model=${model}`,
-					);
+					throw new Error(t("ai.ollamaConfig", { endpoint: endpoint ?? "", model: model ?? "" }));
 				} else if (modelKind === ModelKind.LMStudio) {
 					// Get LM Studio configuration for more detailed error
 					const endpoint = await aiService.getLMStudioEndpoint();
-					throw new Error(`Please check LM Studio configuration: endpoint=${endpoint}`);
+					throw new Error(t("ai.lmstudioConfig", { endpoint: endpoint ?? "" }));
 				}
 			}
 
@@ -98,8 +97,7 @@
 			testTimeout = setTimeout(() => {
 				if (testing) {
 					console.error("AI response timed out after 20 seconds");
-					error =
-						"AI response timed out after 20 seconds. Please check if your AI service is running properly.";
+					error = t("ai.timeout");
 					testing = false;
 					isStreaming = false; // Make sure streaming state is reset on timeout
 					debugInfo += `, Timeout after 20s`;
@@ -146,16 +144,16 @@
 
 			// If result is empty or undefined, show an error
 			if (!result || result.trim() === "") {
-				throw new Error("Received empty response from AI service");
+				throw new Error(t("ai.emptyResponse"));
 			}
 		} catch (e) {
 			console.error("AI credential check error:", e);
 
 			// Don't show abort errors as they're expected when we cancel the request
 			if (e instanceof Error && e.name === "AbortError") {
-				error = "AI request was cancelled";
+				error = t("ai.cancelled");
 			} else {
-				error = e instanceof Error ? e.message : "Unknown error occurred";
+				error = e instanceof Error ? e.message : t("ai.unknown");
 			}
 
 			debugInfo += `, Error: ${error}`;
@@ -196,11 +194,11 @@
 			>
 				{#snippet title()}
 					{#if error}
-						AI credential check failed
+						{t("ai.checkFailed")}
 					{:else if result}
-						AI credential check passed
+						{t("ai.checkPassed")}
 					{:else if isStreaming}
-						AI is responding...
+						{t("ai.responding")}
 					{/if}
 				{/snippet}
 
@@ -208,24 +206,24 @@
 					<div class="result-content" transition:slide={{ duration: 250 }}>
 						{#if error}
 							{#if (modelKind === ModelKind.OpenAI || modelKind === ModelKind.Anthropic) && isUsingButlerAPI && !userService.user}
-								<span> Please sign in to use GitButler's AI API. </span>
+								<span>{t("ai.signInApi")}</span>
 							{:else if modelKind === ModelKind.OpenAI || modelKind === ModelKind.Anthropic}
-								<span> Please check your API key or try GitButler's API. </span>
+								<span>{t("ai.checkKey")}</span>
 							{:else if modelKind === ModelKind.Ollama}
 								<span>
-									Please check your Ollama endpoint and model configuration.
+									{t("ai.checkOllama")}
 									<br />
-									Make sure Ollama is running locally and accessible.
+									{t("ai.ollamaRunning")}
 
-									<Link href="https://ollama.ai">Learn more</Link>
+									<Link href="https://ollama.ai">{t("git.learnMore")}</Link>
 								</span>
 							{:else if modelKind === ModelKind.LMStudio}
 								<span>
-									Please check your LM Studio configuration.
+									{t("ai.checkLm")}
 									<br />
-									Make sure LM Studio is running locally and accessible.
+									{t("ai.lmRunning")}
 
-									<Link href="https://lmstudio.ai">Learn more</Link>
+									<Link href="https://lmstudio.ai">{t("git.learnMore")}</Link>
 								</span>
 							{/if}
 						{:else}
@@ -233,8 +231,8 @@
 								<pre class:streaming={isStreaming}>{isStreaming
 										? streamingResult
 											? streamingResult.trim()
-											: "Loading..."
-										: `Response:\n\n${result?.trim()}`}
+											: t("ai.loading")
+										: `${t("ai.response")}\n\n${result?.trim()}`}
 								</pre>
 							</div>
 						{/if}
@@ -245,33 +243,33 @@
 	{/if}
 	<Button style="pop" wide icon="ai" disabled={testing || isStreaming} onclick={testAiCredentials}>
 		{#if testing || isStreaming}
-			{isStreaming ? "AI is responding..." : "Testing AI connection..."}
+			{isStreaming ? t("ai.responding") : t("ai.testing")}
 		{:else if error}
-			Try again
+			{t("ai.tryAgain")}
 		{:else if result}
-			Test again
+			{t("ai.testAgain")}
 		{:else}
-			Test AI connection
+			{t("ai.test")}
 		{/if}
 	</Button>
 
 	{#if showDebug && debugInfo}
 		<div class="debug-info text-12 text-body">
-			<p><span class="text-bold">Debug info</span>:</p>
+			<p><span class="text-bold">{t("ai.debugInfo")}</span>:</p>
 			<p>{debugInfo}</p>
 		</div>
 	{/if}
 
 	{#if showSampleDiff}
 		<div class="debug-info text-12 text-body">
-			<p class="text-bold">Sample diff:</p>
+			<p class="text-bold">{t("ai.sampleDiff")}</p>
 			<pre class="debug-info__code">{testDiff[0]?.diff}</pre>
 		</div>
 	{/if}
 
 	<div class="debug-info-buttons">
 		<button type="button" class="text-12 debug-button" onclick={toggleSampleMessage}>
-			{showSampleDiff ? "Hide" : "Show"} diff sample
+			{showSampleDiff ? t("ai.hideDiff") : t("ai.showDiff")}
 		</button>
 		<button
 			type="button"
@@ -279,7 +277,7 @@
 			class:debug-button_disabled={!debugInfo}
 			onclick={toggleDebug}
 		>
-			{showDebug ? "Hide" : "Show"} debug info
+			{showDebug ? t("ai.hideDebug") : t("ai.showDebug")}
 		</button>
 	</div>
 </div>

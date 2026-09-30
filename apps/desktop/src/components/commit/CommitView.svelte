@@ -8,6 +8,7 @@
 	import { splitMessage } from "$lib/commits/commitMessage";
 	import { rewrapCommitMessage } from "$lib/config/uiFeatureFlags";
 	import { commitUrl, FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { showToast } from "$lib/notifications/toasts";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -97,7 +98,7 @@
 			throw new Error("No branch selected!");
 		}
 		if (!commitMessage) {
-			showToast({ message: "Commit message is required", style: "danger" });
+			showToast({ message: t("commit.messageRequired"), style: "danger" });
 			return;
 		}
 
@@ -167,7 +168,7 @@
 				kind="ghost"
 				icon="pop-out-bottom-right"
 				size="tag"
-				tooltip="Pop out diff view"
+				tooltip={t("commit.popOut")}
 				onclick={onpopout}
 			/>
 		{/if}
@@ -195,7 +196,7 @@
 					drawer?.open();
 					setMode("edit");
 				}}
-				tooltip={isReadOnly ? "Read-only mode" : "Reword commit"}
+				tooltip={isReadOnly ? t("workspace.readOnly") : t("commit.reword")}
 				disabled={isReadOnly || isEditingMessage}
 			/>
 		{/if}
@@ -231,9 +232,9 @@
 					{projectId}
 					{stackId}
 					action={({ title, description }) => saveCommitMessage(title, description)}
-					actionLabel="Save changes"
+					actionLabel={t("commit.saveChanges")}
 					onCancel={cancelEdit}
-					floatingBoxHeader="Reword commit"
+					floatingBoxHeader={t("commit.reword")}
 					loading={messageUpdateQuery.current.isLoading}
 					existingCommitId={commit.id}
 					title={parsedMessage?.title || ""}

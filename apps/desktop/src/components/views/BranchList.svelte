@@ -23,6 +23,7 @@
 	import { REORDER_DROPZONE_FACTORY } from "$lib/dragging/stackingReorderDropzoneManager";
 	import { useForgeAuth } from "$lib/forge/forgeAuth.svelte";
 	import { FORGE_INFO_SERVICE, prUrl } from "$lib/forge/forgeInfo.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { createBranchSelection } from "$lib/selection/key";
 	import { precomputeStack, segmentContext } from "$lib/stacks/segmentContext";
 	import { getStackContext } from "$lib/stacks/stackController.svelte";
@@ -162,7 +163,7 @@
 				<ReduxResult {projectId} {stackId} result={changesQuery.result}>
 					{#snippet children(result, { projectId, stackId })}
 						<ChangedFilesPanel
-							title="All Changes"
+							title={t("workspace.allChanges")}
 							{projectId}
 							{stackId}
 							draggableFiles
@@ -202,7 +203,7 @@
 					testId={TestId.BranchHeaderAddDependentBranchButton}
 					size="tag"
 					kind="outline"
-					tooltip={controller.isReadOnly ? "Read-only mode" : "Create new branch"}
+					tooltip={controller.isReadOnly ? t("workspace.readOnly") : t("commit.createBranch")}
 					onclick={async () => {
 						addDependentBranchModalContext = {
 							projectId,
@@ -239,13 +240,13 @@
 						}}
 						disabled={!!controller.exclusiveAction || blockedByConflicts}
 						tooltip={blockedByConflicts
-							? "Resolve conflicts before landing"
+							? t("branchMenu.resolveBeforeLand")
 							: wholeStack
-								? "Land the whole stack directly into the target branch"
-								: "Land directly into the target branch"}
+								? t("land.stackDirect")
+								: t("land.direct")}
 						icon="branch-merge"
 					>
-						{wholeStack ? "Land stack" : "Land"}
+						{wholeStack ? t("land.stack") : t("branchMenu.land")}
 					</Button>
 				{/if}
 			{:else if canPublishPR && !isNewBranch && branchName}
@@ -266,7 +267,7 @@
 						disabled={!!controller.exclusiveAction}
 						icon="pr-plus"
 					>
-						{`Create ${forgeInfo?.unit.abbr ?? "PR"}`}
+						{t("pr.create", { abbr: forgeInfo?.unit.abbr ?? "PR" })}
 					</Button>
 				{:else}
 					{@const externalPrUrl = forgeInfo ? prUrl(forgeInfo, prNumber) : undefined}
@@ -282,7 +283,7 @@
 						}}
 						icon="arrow-up-righ"
 					>
-						{`View ${forgeInfo?.unit.abbr ?? "PR"}`}
+						{t("pr.view", { abbr: forgeInfo?.unit.abbr ?? "PR" })}
 					</Button>
 				{/if}
 			{/if}

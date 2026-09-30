@@ -15,6 +15,7 @@
 <script lang="ts">
 	import { getEditorUri, URL_SERVICE } from "$lib/backend/url";
 	import { isDiffHunk, lineIdsToHunkHeaders } from "$lib/hunks/hunk";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { vscodePath } from "$lib/project/project";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -165,7 +166,7 @@
 				<ContextMenuSection>
 					<ContextMenuItem
 						testId={TestId.HunkContextMenu_DiscardChange}
-						label="Discard change"
+						label={t("files.discardChange")}
 						icon="bin"
 						onclick={() => {
 							discardHunk(item);
@@ -189,7 +190,7 @@
 				<ContextMenuSection>
 					<ContextMenuItem
 						testId={TestId.HunkContextMenu_UncommitChange}
-						label="Uncommit change"
+						label={t("files.uncommitChange")}
 						icon="commit-undo"
 						onclick={async () => {
 							uncommitHunk(item);
@@ -201,7 +202,7 @@
 			<ContextMenuSection>
 				<ContextMenuItem
 					testId={TestId.HunkContextMenu_OpenInEditor}
-					label="Open in {defaultCodeEditor.current.displayName}"
+					label={t("files.openIn", { editor: defaultCodeEditor.current.displayName })}
 					icon="open-in-ide"
 					onclick={async () => {
 						const project = await projectService.fetchProject(projectId);
@@ -225,7 +226,7 @@
 				<ContextMenuSection>
 					<ContextMenuItem
 						testId={TestId.HunkContextMenu_SelectAll}
-						label="Select all"
+						label={t("files.selectAll")}
 						icon="select-all"
 						onclick={() => {
 							selectAllHunkLines(item.hunk);
@@ -234,7 +235,7 @@
 					/>
 					<ContextMenuItem
 						testId={TestId.HunkContextMenu_UnselectAll}
-						label="Unselect all"
+						label={t("files.unselectAll")}
 						icon="select-all-remove"
 						onclick={() => {
 							unselectAllHunkLines(item.hunk);
@@ -243,7 +244,7 @@
 					/>
 					<ContextMenuItem
 						testId={TestId.HunkContextMenu_InvertSelection}
-						label="Invert selection"
+						label={t("files.invert")}
 						icon="select-all-inverse"
 						onclick={() => {
 							invertHunkSelection(item.hunk);

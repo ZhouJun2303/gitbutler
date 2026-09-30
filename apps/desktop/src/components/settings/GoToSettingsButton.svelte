@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { useSettingsModal } from "$lib/settings/settingsModal.svelte";
 	import { Button } from "@gitbutler/ui-svelte";
 
@@ -12,5 +13,5 @@
 		openGeneralSettings("general");
 	}}
 >
-	Go to Settings
+	{t("settings.goTo")}
 </Button>

@@ -15,6 +15,7 @@
 		projectCommitGenerationUseEmojis,
 	} from "$lib/config/config";
 	import { showError } from "$lib/error/showError";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { uploadFiles } from "@gitbutler/shared/dom";
@@ -235,17 +236,14 @@
 		medium: 320,
 	};
 
-	const generateMessages = $derived.by(() => ({
-		commit: "Generate commit message",
-		pr: `Generate ${reviewUnitAbbr ?? "PR"} description`,
-	}));
-
 	function getTooltipText(): string | undefined {
 		if (!canUseAI) {
-			return "You need to enable AI in the project settings to use this feature";
+			return t("editor.aiDisabled");
 		}
 		if (currentEditorWidth <= DROPDOWN_BTN_BREAKPOINTS.medium) {
-			return generateMessages[messageType];
+			return messageType === "commit"
+				? t("editor.generateCommit")
+				: t("editor.generateReview", { abbr: reviewUnitAbbr ?? "PR" });
 		}
 		return undefined;
 	}
@@ -254,7 +252,9 @@
 </script>
 
 {#snippet buttonText()}
-	{currentEditorWidth > DROPDOWN_BTN_BREAKPOINTS.medium ? "Generate message" : "Generate"}
+	{currentEditorWidth > DROPDOWN_BTN_BREAKPOINTS.medium
+		? t("editor.generateMessage")
+		: t("editor.generate")}
 {/snippet}
 
 <Modal
@@ -365,7 +365,7 @@
 				<Button
 					kind="ghost"
 					icon={useFloatingBox.current ? "pop-out-top-left" : "pop-out-bottom-right"}
-					tooltip={useFloatingBox.current ? "Exit floating mode" : "Use floating mode"}
+					tooltip={useFloatingBox.current ? t("editor.exitFloating") : t("editor.useFloating")}
 					onclick={() => {
 						useFloatingBox.set(!useFloatingBox.current);
 					}}
@@ -378,7 +378,7 @@
 					<Button
 						kind="ghost"
 						icon="paperclip"
-						tooltip="Drop, paste or click to upload files"
+						tooltip={t("editor.uploadFiles")}
 						onclick={handleAttachFiles}
 					/>
 				{/if}
@@ -386,7 +386,7 @@
 					<FormattingButton
 						icon="text-wrap"
 						activated={useRuler}
-						tooltip="Wrap text automatically"
+						tooltip={t("editor.wrap")}
 						onclick={async () => {
 							uiState.global.useRuler.set(!useRuler);
 							await tick(); // Wait for reactive update.
@@ -439,7 +439,7 @@
 				{#snippet contextMenuSlot()}
 					<ContextMenuSection>
 						<ContextMenuItem
-							label="Extra concise"
+							label={t("editor.extraConcise")}
 							onclick={() => ($commitGenerationExtraConcise = !$commitGenerationExtraConcise)}
 						>
 							{#snippet control()}
@@ -448,7 +448,7 @@
 						</ContextMenuItem>
 
 						<ContextMenuItem
-							label="Haiku"
+							label={t("editor.haiku")}
 							onclick={() => ($commitGenerationHaiku = !$commitGenerationHaiku)}
 						>
 							{#snippet control()}
@@ -457,7 +457,7 @@
 						</ContextMenuItem>
 
 						<ContextMenuItem
-							label="Use emojis 😎"
+							label={t("editor.emojis")}
 							onclick={() => ($commitGenerationUseEmojis = !$commitGenerationUseEmojis)}
 						>
 							{#snippet control()}

@@ -3,6 +3,7 @@
 	import { commitCommittedAtDate } from "$lib/branches/v3";
 	import { splitMessage } from "$lib/commits/commitMessage";
 	import { rewrapCommitMessage } from "$lib/config/uiFeatureFlags";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { UI_STATE } from "$lib/state/uiState.svelte";
 	import { useUserAvatarUrl } from "$lib/user/userAvatar.svelte";
 	import { rejoinParagraphs, truncate } from "$lib/utils/string";
@@ -45,7 +46,7 @@
 
 <div class="commit">
 	<div class="metadata text-12">
-		<span>Author:</span>
+		<span>{t("commit.author")}</span>
 		<Avatar
 			size="medium"
 			username={commit.author.name}
@@ -54,14 +55,14 @@
 		<span class="divider">•</span>
 		<TimeAgo date={commitCommittedAtDate(commit)} />
 		<span class="divider">•</span>
-		<Tooltip text="Copy commit SHA">
+		<Tooltip text={t("commit.copySha")}>
 			<CopyButton
 				class="copy-sha"
 				text={commit.id.slice(0, 7)}
 				hideIcon
 				onclick={() => {
 					clipboardService.write(commit.id, {
-						message: "Commit SHA copied",
+						message: t("commit.shaCopied"),
 					});
 				}}
 			/>
@@ -69,14 +70,14 @@
 		{#if commit.changeId}
 			{@const changeId = commit.changeId}
 			<span class="divider">•</span>
-			<Tooltip text="Copy change ID">
+			<Tooltip text={t("commit.copyChangeId")}>
 				<CopyButton
 					class="copy-change-id"
 					text={changeId.slice(0, 3)}
 					hideIcon
 					onclick={() => {
 						clipboardService.write(changeId, {
-							message: "Change ID copied",
+							message: t("commit.changeIdCopied"),
 						});
 					}}
 				/>

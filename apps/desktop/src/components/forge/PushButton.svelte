@@ -6,6 +6,7 @@
 	import { splitMessage } from "$lib/commits/commitMessage";
 	import { projectRunCommitHooks } from "$lib/config/config";
 	import { commitUrl, FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { branchHasConflicts, branchHasUnpushedCommits } from "$lib/stacks/stack";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -121,7 +122,7 @@
 				multipleBranches && !isLastBranchInStack
 					? `${branchName} and all branches below it`
 					: branchName;
-			chipToasts.success(`Pushed ${branchText} successfully`);
+			chipToasts.success(t("push.success", { branch: branchText }));
 		} catch (error: any) {
 			if (error?.code === "GitForcePushProtection") {
 				forcePushProtectionModal?.show();
@@ -140,30 +141,30 @@
 		remoteTrackingBranch: string | null,
 	): string | undefined {
 		if (isReadOnly) {
-			return "Read-only mode";
+			return t("push.readOnly");
 		}
 
 		if (!hasThingsToPush) {
-			return "No commits to push";
+			return t("push.nothing");
 		}
 
 		if (hasConflicts) {
-			return "In order to push, please resolve any conflicted commits.";
+			return t("push.resolve");
 		}
 
 		if (multipleBranches && !isLastBranchInStack) {
-			return "Push this and all branches below";
+			return t("push.thisAndBelow");
 		}
 
 		if (withForce) {
 			return remoteTrackingBranch
-				? "Force push this branch"
-				: `Force push this branch to ${remoteTrackingBranch}`;
+				? t("push.forceThis")
+				: t("push.forceTo", { remote: remoteTrackingBranch ?? "" });
 		}
 
 		return remoteTrackingBranch
-			? `Push this branch to ${remoteTrackingBranch}`
-			: "Push this branch";
+			? t("push.thisTo", { remote: remoteTrackingBranch })
+			: t("push.this");
 	}
 
 	const doNotShowPushBelowWarning = persisted<boolean>(false, "doNotShowPushBelowWarning");
@@ -184,11 +185,11 @@
 	onclick={() => handleClick({ withForce, skipForcePushProtection: false, gerritFlags: [] })}
 	icon={multipleBranches && !isLastBranchInStack ? "push-all" : "push"}
 >
-	{isGerritMode ? "Push" : withForce ? "Force push" : "Push"}
+	{isGerritMode ? t("push.push") : withForce ? t("push.force") : t("push.push")}
 </Button>
 
 <Modal
-	title="Push with dependencies"
+	title={t("push.withDeps")}
 	width="small"
 	bind:this={confirmationModal}
 	onSubmit={async (close) => {
@@ -202,8 +203,7 @@
 	}}
 >
 	<p>
-		You're about to push <span class="text-bold">{branchName}</span>. To maintain the correct
-		history, GitButler will also push all branches below this branch in the stack.
+		{t("push.aboutTo", { branch: branchName })}
 	</p>
 
 	{#snippet controls(close)}
@@ -211,7 +211,7 @@
 			<div class="flex flex-1">
 				<label for="dont-show-again" class="modal-footer__checkbox">
 					<Checkbox name="dont-show-again" small bind:checked={$doNotShowPushBelowWarning} />
-					<span class="text-12"> Don’t show again</span>
+					<span class="text-12"> {t("push.dontShow")}</span>
 				</label>
 			</div>
 			<Button
@@ -221,17 +221,17 @@
 					close();
 				}}
 			>
-				Cancel
+				{t("push.cancel")}
 			</Button>
 			<Button testId={TestId.StackConfirmPushModalButton} style="pop" type="submit" width={90}>
-				Push
+				{t("push.push")}
 			</Button>
 		</div>
 	{/snippet}
 </Modal>
 
 <Modal
-	title="Protected force push"
+	title={t("push.protected")}
 	width={480}
 	type="warning"
 	bind:this={forcePushProtectionModal}
@@ -265,7 +265,8 @@
 						author={commit.author.name}
 						{url}
 						onOpen={(url) => urlService.openExternalUrl(url)}
-						onCopy={() => clipboardService.write(commit.id, { message: "Commit hash copied" })}
+						onCopy={() =>
+							clipboardService.write(commit.id, { message: t("commitMenu.hashCopied") })}
 					/>
 				{/each}
 			</ScrollableContainer>
@@ -274,8 +275,8 @@
 
 	{#snippet controls(close)}
 		<div class="controls">
-			<Button kind="outline" type="submit">Force push anyway</Button>
-			<Button wide style="pop" onclick={close}>Cancel</Button>
+			<Button kind="outline" type="submit">{t("push.anyway")}</Button>
+			<Button wide style="pop" onclick={close}>{t("push.cancel")}</Button>
 		</div>
 	{/snippet}
 </Modal>

@@ -10,6 +10,7 @@
 
 <script lang="ts">
 	import Icon from "$components/Icon.svelte";
+	import { uiText } from "$lib/i18n/locale.svelte";
 	import { type IconName } from "$lib/icons/names";
 
 	type Props = {
@@ -64,17 +65,17 @@
 	<div class={statusClasses("text")}>
 		<span class="text-10 text-bold status-badge__text">
 			{#if status === "closed"}
-				Closed
+				{uiText("review.closed")}
 			{:else if status === "loading"}
-				Processing
+				{uiText("review.processing")}
 			{:else if status === "changes-requested"}
-				Changes requested
+				{uiText("review.changesRequested")}
 			{:else if status === "approved"}
-				Approved
+				{uiText("review.approved")}
 			{:else if status === "in-discussion"}
-				In discussion
+				{uiText("review.inDiscussion")}
 			{:else}
-				Unreviewed
+				{uiText("review.unreviewed")}
 			{/if}
 		</span>
 	</div>

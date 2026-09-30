@@ -3,6 +3,7 @@
 	import { changesToDiffSpec } from "$lib/commits/utils";
 	import { autoSelectBranchCreationFeature } from "$lib/config/uiFeatureFlags";
 	import { isTreeChange } from "$lib/hunks/change";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { AsyncButton, Button, Modal } from "@gitbutler/ui-svelte";
@@ -65,13 +66,13 @@
 	}
 </script>
 
-<Modal width={434} type="info" title="Stash changes into a new branch" bind:this={modal}>
+<Modal width={434} type="info" title={t("stash.title")} bind:this={modal}>
 	{#snippet children(item)}
 		<div class="content-wrap">
 			<BranchNameTextbox
 				bind:this={stashBranchNameInput}
 				id="stashBranchName"
-				placeholder="Enter your branch name..."
+				placeholder={t("stash.placeholder")}
 				bind:value={stashBranchName}
 				autofocus
 				onnormalizedvalue={(value) => (normalizedRefName = value)}
@@ -80,25 +81,23 @@
 			<div class="explanation">
 				<p class="primary-text">
 					{#if isChangedFilesItem(item) && isChangedFolderItem(item)}
-						All changes in this folder
+						{t("stash.folderLead")}
 					{:else}
-						Your selected changes
+						{t("stash.selectedLead")}
 					{/if}
-					will be moved to a new branch and removed from your current workspace. To get these changes
-					back later, switch to the new branch and uncommit the stash.
+					{t("stash.moved")}
 				</p>
 			</div>
 
 			<div class="technical-note">
 				<p class="text-12 text-body clr-text-2">
-					💡 This creates a new branch, commits your changes, then unapplies the branch. Future
-					versions will have simpler stash management.
+					💡 {t("stash.note")}
 				</p>
 			</div>
 		</div>
 	{/snippet}
 	{#snippet controls(close, item)}
-		<Button kind="outline" type="reset" onclick={close}>Cancel</Button>
+		<Button kind="outline" type="reset" onclick={close}>{t("general.cancel")}</Button>
 		<AsyncButton
 			style="pop"
 			disabled={!isStashBranchNameValid}
@@ -107,7 +106,7 @@
 				if (isChangedFilesItem(item)) await confirmStashIntoBranch(item, normalizedRefName);
 			}}
 		>
-			Stash into branch
+			{t("stash.action")}
 		</AsyncButton>
 	{/snippet}
 </Modal>

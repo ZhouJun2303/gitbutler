@@ -4,6 +4,7 @@
 	import newStackLefttSvg from "$components/stackTabs/assets/new-stack-left.svg?raw";
 	import newStackRightSvg from "$components/stackTabs/assets/new-stack-right.svg?raw";
 	import { autoSelectBranchCreationFeature } from "$lib/config/uiFeatureFlags";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { useSettingsModal } from "$lib/settings/settingsModal.svelte";
 	import { getStackName } from "$lib/stacks/stack";
 	import { STACK_SERVICE } from "$lib/stacks/stackService.svelte";
@@ -142,7 +143,7 @@
 	<div class="content-wrap">
 		<BranchNameTextbox
 			bind:this={branchNameInput}
-			label="New branch"
+			label={t("branchModal.newBranch")}
 			id={ElementId.NewBranchNameInput}
 			value={createRefName}
 			autofocus
@@ -163,9 +164,9 @@
 				</div>
 
 				<div class="radio-content">
-					<h3 class="text-14 text-bold text-body radio-title">Independent branch</h3>
+					<h3 class="text-14 text-bold text-body radio-title">{t("branchModal.independent")}</h3>
 					<p class="text-12 text-body radio-caption">
-						Create an independent branch<br />in a new stack.
+						{t("branchModal.independentCaption")}
 					</p>
 
 					<div class="radio-illustration">
@@ -195,12 +196,12 @@
 				</div>
 
 				<div class="radio-content">
-					<h3 class="text-14 text-bold text-body radio-title">Dependent branch</h3>
+					<h3 class="text-14 text-bold text-body radio-title">{t("branchModal.dependent")}</h3>
 					<p class="text-12 text-body radio-caption">
 						{#if allStacks.length === 0}
-							Create a branch that depends<br />on another stack (none available).
+							{t("branchModal.dependentNone")}
 						{:else}
-							Create a branch that depends<br />on a selected stack.
+							{t("branchModal.dependentCaption")}
 						{/if}
 					</p>
 
@@ -215,9 +216,9 @@
 			<Select
 				options={stackOptions}
 				value={selectedStackId}
-				label="Add to stack"
+				label={t("branchModal.addToStack")}
 				disabled={stackOptions.length <= 1}
-				placeholder="Select a stack..."
+				placeholder={t("branchModal.selectStack")}
 				onselect={(value) => (selectedStackId = value)}
 			>
 				{#snippet itemSnippet({ item, highlighted })}
@@ -233,9 +234,9 @@
 
 			<p>
 				{#if createRefType === "stack"}
-					The new branch will be applied in parallel with other stacks in the workspace.
+					{t("branchModal.parallel")}
 					<br />
-					Adjust branch placement and preferences in
+					{t("branchModal.adjust")}
 					<button
 						type="button"
 						class="settings-link underline-dotted"
@@ -244,13 +245,14 @@
 							openGeneralSettings("lanes-and-branches");
 						}}
 					>
-						Settings → Lanes & branches
+						{t("branchModal.settingsLink")}
 					</button>
 				{:else}
-					Creates a branch that depends on a selected stack.
+					{t("branchModal.depends")}
 					<br />
-					A stack's top branches also have a
-					<i class="create-dependent-icon"><Icon name="stack-plus" /></i> icon to create dependent branches.
+					{t("branchModal.topAlsoBefore")}
+					<i class="create-dependent-icon"><Icon name="stack-plus" /></i>
+					{t("branchModal.topAlsoAfter")}
 				{/if}
 			</p>
 		</div>
@@ -259,14 +261,14 @@
 	{#snippet controls(close)}
 		<div class="footer">
 			<span class="text-12 text-body footer-text"
-				>See more: <Link
-					href="https://docs.gitbutler.com/features/branch-management/stacked-branches"
-					>Stacked vs. Independent</Link
+				>{t("branchModal.seeMore")}
+				<Link href="https://docs.gitbutler.com/features/branch-management/stacked-branches"
+					>{t("branchModal.stackedVs")}</Link
 				></span
 			>
 
 			<div class="footer__controls">
-				<Button kind="outline" type="reset" onclick={close}>Cancel</Button>
+				<Button kind="outline" type="reset" onclick={close}>{t("branchModal.cancel")}</Button>
 				<Button
 					style="pop"
 					type="submit"
@@ -275,7 +277,7 @@
 					loading={isAddingNew}
 					testId={TestId.ConfirmSubmit}
 				>
-					Create branch
+					{t("branchModal.create")}
 				</Button>
 			</div>
 		</div>

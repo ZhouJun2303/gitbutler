@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { PROMPT_SERVICE } from "$lib/ai/aiPromptService";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { inject } from "@gitbutler/core/context";
 	import { Select, SelectItem } from "@gitbutler/ui-svelte";
 	import { onMount, untrack } from "svelte";
@@ -42,6 +43,13 @@
 		setAllPrompts($userPrompts);
 	});
 
+	const promptOptions = $derived(
+		allPrompts.map((prompt) => ({
+			label: prompt.id === defaultId ? t("ai.defaultPrompt") : prompt.name,
+			value: prompt.id,
+		})),
+	);
+
 	$effect(() => {
 		if (!$selectedPromptId || !promptService.findPrompt(allPrompts, $selectedPromptId)) {
 			$selectedPromptId = defaultId;
@@ -51,8 +59,8 @@
 
 <Select
 	value={$selectedPromptId}
-	options={allPrompts.map((p) => ({ label: p.name, value: p.id }))}
-	label={promptUse === "commits" ? "Commit message" : "Branch name"}
+	options={promptOptions}
+	label={promptUse === "commits" ? t("ai.commitMessage") : t("ai.branchName")}
 	wide={true}
 	searchable
 	disabled={allPrompts.length === 1}

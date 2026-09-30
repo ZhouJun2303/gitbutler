@@ -3,6 +3,7 @@
 	import { COMMIT_ANALYTICS } from "$lib/analytics/commitAnalytics";
 	import { projectRunCommitHooks } from "$lib/config/config";
 	import { HOOKS_SERVICE } from "$lib/git/hooksService";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { showToast, showWarning } from "$lib/notifications/toasts";
 	import { FILE_SELECTION_MANAGER } from "$lib/selection/fileSelectionManager.svelte";
 	import { createWorktreeSelection } from "$lib/selection/key";
@@ -51,7 +52,7 @@
 
 	async function createCommit(message: string) {
 		if (isCooking) {
-			showToast({ message: "Commit is already in progress", style: "danger" });
+			showToast({ message: t("commit.inProgress"), style: "danger" });
 			return;
 		}
 
@@ -90,7 +91,7 @@
 			if ($runCommitHooks) {
 				const messageHookResult = await runMessageHook({ projectId, message });
 				if (messageHookResult?.status === "failure") {
-					showWarning("Commit message hook failed", messageHookResult.error);
+					showWarning(t("commit.hookFailed"), messageHookResult.error);
 					return;
 				} else if (messageHookResult?.status === "message") {
 					finalMessage = messageHookResult.message;
@@ -177,7 +178,7 @@
 
 		const message = description ? title + "\n\n" + description : title;
 		if (!message) {
-			showToast({ message: "Commit message is required", style: "danger" });
+			showToast({ message: t("commit.messageRequired"), style: "danger" });
 			return;
 		}
 
@@ -224,7 +225,7 @@
 		bind:this={input}
 		{projectId}
 		{stackId}
-		actionLabel="Create commit"
+		actionLabel={t("commit.create")}
 		action={({ title, description }) => handleCommitCreation(title, description)}
 		onChange={({ title, description }) => handleMessageUpdate(title, description)}
 		onCancel={cancel}

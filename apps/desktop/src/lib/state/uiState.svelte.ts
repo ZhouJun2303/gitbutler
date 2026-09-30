@@ -3,6 +3,7 @@ import { InjectionToken } from "@gitbutler/core/context";
 import { reactive } from "@gitbutler/shared/reactiveUtils.svelte";
 import { type Reactive } from "@gitbutler/shared/storeUtils";
 import { createEntityAdapter, createSlice, type EntityState } from "@reduxjs/toolkit";
+import type { AppLanguage } from "$lib/i18n/messages";
 import type { TerminalService } from "$lib/settings/terminalService";
 import type { AppDispatch } from "$lib/state/clientState.svelte";
 import type { ScrollbarVisilitySettings } from "@gitbutler/ui-svelte";
@@ -189,6 +190,8 @@ export type GlobalUiState = {
 	svgAsImage: boolean;
 	syntaxThemeLight: string;
 	syntaxThemeDark: string;
+	/** Interface language. Undefined until the saved choice or system language is applied. */
+	language: AppLanguage | undefined;
 };
 
 export const UI_STATE = new InjectionToken<UiState>("UiState");
@@ -265,6 +268,7 @@ export class UiState {
 		svgAsImage: true,
 		syntaxThemeLight: "github-light",
 		syntaxThemeDark: "github-dark",
+		language: undefined,
 	});
 
 	/**

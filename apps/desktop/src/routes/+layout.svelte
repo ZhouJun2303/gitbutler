@@ -20,6 +20,8 @@
 	import { initDependencies } from "$lib/bootstrap/deps";
 	import { GIT_CONFIG_SERVICE } from "$lib/config/gitConfigService";
 	import { fModeEnabled } from "$lib/config/uiFeatureFlags";
+	import { setAppLanguage } from "$lib/i18n/locale.svelte";
+	import { detectLanguage, isAppLanguage } from "$lib/i18n/messages";
 	import { PROJECTS_SERVICE } from "$lib/project/projectsService";
 	import { TERMINAL_SERVICE } from "$lib/settings/terminalService";
 	import { createKeybind } from "$lib/shortcuts/hotkeys";
@@ -49,8 +51,18 @@
 	const uiState = inject(UI_STATE);
 	const terminalService = inject(TERMINAL_SERVICE);
 
+	$effect(() => {
+		const stored = uiState.global.language.current;
+		if (isAppLanguage(stored)) {
+			setAppLanguage(stored);
+		}
+	});
+
 	clientState.initPersist().then(async () => {
 		await initUserSettings(uiState, backend.platformName, terminalService);
+		if (!isAppLanguage(uiState.global.language.current)) {
+			uiState.global.language.set(detectLanguage());
+		}
 	});
 
 	// =============================================================================

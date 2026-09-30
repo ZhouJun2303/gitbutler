@@ -4,6 +4,7 @@
 	import SnapshotSection from "$components/history/SnapshotSection.svelte";
 	import ReduxResult from "$components/shared/ReduxResult.svelte";
 	import { createdOnDay, HISTORY_SERVICE } from "$lib/history/history";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { MODE_SERVICE } from "$lib/mode/modeService";
 	import { toHumanReadableTime } from "$lib/utils/time";
 	import { inject } from "@gitbutler/core/context";
@@ -213,12 +214,12 @@
 			<Button
 				size="tag"
 				kind="outline"
-				tooltip="Restores GitButler and your files to the state before this operation. Revert actions can also be undone."
+				tooltip={t("history.revertTooltip")}
 				onclick={() => {
 					onRestoreClick();
 				}}
 				disabled={restoring || mode.response?.type !== "OpenWorkspace"}
-				loading={restoring}>Revert</Button
+				loading={restoring}>{t("history.revert")}</Button
 			>
 		</div>
 		<span class="snapshot-time text-11">

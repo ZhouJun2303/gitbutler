@@ -2,6 +2,7 @@
 	import Badge from "$components/Badge.svelte";
 	import Icon from "$components/Icon.svelte";
 	import Tooltip from "$components/Tooltip.svelte";
+	import { uiText } from "$lib/i18n/locale.svelte";
 	import type { FileStatus } from "$components/file/types";
 	import type { ComponentColorType } from "$lib/utils/colorTypes";
 
@@ -19,13 +20,13 @@
 	function getFullStatusText(status: FileStatus): string {
 		switch (status) {
 			case "addition":
-				return "Added";
+				return uiText("file.added");
 			case "modification":
-				return "Modified";
+				return uiText("file.modified");
 			case "deletion":
-				return "Deleted";
+				return uiText("file.deleted");
 			case "rename":
-				return "Renamed";
+				return uiText("file.renamed");
 			default:
 				return status;
 		}

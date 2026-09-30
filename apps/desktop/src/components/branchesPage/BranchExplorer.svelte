@@ -14,6 +14,7 @@
 	import { useForgeAuth } from "$lib/forge/forgeAuth.svelte";
 	import { FORGE_INFO_SERVICE } from "$lib/forge/forgeInfo.svelte";
 	import { LISTING_SERVICE } from "$lib/forge/listingService.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { debounce } from "$lib/utils/debounce";
 	import { inject } from "@gitbutler/core/context";
 	import { reactive } from "@gitbutler/shared/reactiveUtils.svelte";
@@ -126,14 +127,14 @@
 	const filterOptions = $derived.by<Partial<Record<BranchFilterOption, string>>>(() => {
 		if (listServiceEnabled) {
 			return {
-				all: "All",
-				pullRequest: "PRs",
-				local: "Local",
+				all: t("branches.all"),
+				pullRequest: t("branches.prs"),
+				local: t("branches.local"),
 			};
 		} else {
 			return {
-				all: "All",
-				local: "Local",
+				all: t("branches.all"),
+				local: t("branches.local"),
 			};
 		}
 	});
@@ -183,7 +184,7 @@
 	<div class="branches__header">
 		<div class="branches__header-info">
 			<div class="branches-title" class:hide-branch-title={searching}>
-				<span class="text-14 text-bold">Branches</span>
+				<span class="text-14 text-bold">{t("branches.title")}</span>
 
 				<Badge>{combined.length}</Badge>
 			</div>
@@ -203,7 +204,7 @@
 					oninput={debounceSearchInput}
 					class="search-input text-13"
 					type="text"
-					placeholder="Search branches"
+					placeholder={t("branches.search")}
 					onkeydown={handleSearchKeyDown}
 				/>
 			</div>
@@ -227,27 +228,42 @@
 							{/each}
 						</div>
 					{:else}
-						{@render branchGroup({ title: "Applied", children: groupedBranches.applied })}
+						{@render branchGroup({
+							title: t("branches.applied"),
+							children: groupedBranches.applied,
+						})}
 
 						{#if groupedBranches.authored.length > 0}
-							{@render branchGroup({ title: "Mine", children: groupedBranches.authored })}
+							{@render branchGroup({
+								title: t("branches.mine"),
+								children: groupedBranches.authored,
+							})}
 						{/if}
 
 						{#if groupedBranches.review.length > 0}
-							{@render branchGroup({ title: "Review Requested", children: groupedBranches.review })}
+							{@render branchGroup({
+								title: t("branches.review"),
+								children: groupedBranches.review,
+							})}
 						{/if}
 
-						{@render branchGroup({ title: "Today", children: groupedBranches.today })}
-						{@render branchGroup({ title: "Yesterday", children: groupedBranches.yesterday })}
-						{@render branchGroup({ title: "Last week", children: groupedBranches.lastWeek })}
-						{@render branchGroup({ title: "Older", children: groupedBranches.older })}
+						{@render branchGroup({ title: t("branches.today"), children: groupedBranches.today })}
+						{@render branchGroup({
+							title: t("branches.yesterday"),
+							children: groupedBranches.yesterday,
+						})}
+						{@render branchGroup({
+							title: t("branches.lastWeek"),
+							children: groupedBranches.lastWeek,
+						})}
+						{@render branchGroup({ title: t("branches.older"), children: groupedBranches.older })}
 					{/if}
 				</ScrollableContainer>
 			</div>
 		{:else}
 			<EmptyStatePlaceholder image={noBranchesSvg} width={180} bottomMargin={48}>
 				{#snippet caption()}
-					No branches<br />match your filter
+					{t("branches.noMatch")}
 				{/snippet}
 			</EmptyStatePlaceholder>
 		{/if}
@@ -256,24 +272,26 @@
 			<EmptyStatePlaceholder image={noBranchesSvg} width={EMPTY_STATE_WIDTH} bottomMargin={48}>
 				{#snippet title()}
 					{#if selectedOption === "local"}
-						No local branches found
+						{t("branches.noLocal")}
 					{:else}
-						No branches or {reviewUnitAbbr}s found
+						{t("branches.noAny", { unit: reviewUnitAbbr })}
 					{/if}
 				{/snippet}
 				{#snippet caption()}
 					{#if selectedOption === "pullRequest"}
-						No {reviewUnitAbbr}s found {#if baseBranch}
-							from <strong>{baseBranch.remoteName}</strong>{/if}.
+						{t("branches.noPrs", { unit: reviewUnitAbbr })}
+						{#if baseBranch}
+							{t("branches.fromRemote")} <strong>{baseBranch.remoteName}</strong>.
+						{/if}
 					{:else if selectedOption === "local"}
-						Create a new branch or fetch from your remote.
+						{t("branches.createOrFetch")}
 					{:else if baseBranch}
-						Branches and {reviewUnitAbbr}s from
+						{t("branches.willAppear", { unit: reviewUnitAbbr })}
 						<strong>{baseBranch.remoteName}/{baseBranch.shortName}</strong>
-						will appear here.
+						{t("branches.willAppearHere", { unit: reviewUnitAbbr })}
 					{/if}
 					{#if shouldShowAuthMessage}
-						Authenticate with {forgeName} to see {reviewUnitAbbr}s.
+						{t("branches.authenticate", { forge: forgeName, unit: reviewUnitAbbr })}
 					{/if}
 				{/snippet}
 			</EmptyStatePlaceholder>

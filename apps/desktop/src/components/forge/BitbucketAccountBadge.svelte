@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Badge } from "@gitbutler/ui-svelte";
 	import type { BitbucketAccountIdentifier } from "@gitbutler/but-sdk";
 
@@ -12,14 +13,14 @@
 	export function badgeText(account: BitbucketAccountIdentifier): string | null {
 		switch (account.type) {
 			case "apiToken":
-				return "API token";
+				return t("forge.apiToken");
 		}
 	}
 
 	export function tooltipText(account: BitbucketAccountIdentifier): string {
 		switch (account.type) {
 			case "apiToken":
-				return "Atlassian API token";
+				return t("forge.bitbucketToken");
 		}
 	}
 </script>

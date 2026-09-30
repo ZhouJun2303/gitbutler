@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Badge } from "@gitbutler/ui-svelte";
 	import type { GithubAccountIdentifier } from "@gitbutler/but-sdk";
 
@@ -27,9 +28,9 @@
 			case "oAuthUsername":
 				return "";
 			case "enterprise":
-				return "GitHub Enterprise";
+				return t("forge.githubEnterprise");
 			case "patUsername":
-				return "Personal Access Token";
+				return t("forge.pat");
 		}
 	}
 </script>

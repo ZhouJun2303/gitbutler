@@ -2,6 +2,7 @@
 	import { goto } from "$app/navigation";
 	import ProfileButton from "$components/shared/ProfileButton.svelte";
 	import ShareIssueModal from "$components/shared/ShareIssueModal.svelte";
+	import { getLanguage, setAppLanguage, t } from "$lib/i18n/locale.svelte";
 	import {
 		branchesPath,
 		isBranchesPath,
@@ -31,7 +32,14 @@
 	let shareIssueModal = $state<ShareIssueModal>();
 
 	const uiState = inject(UI_STATE);
+	const language = uiState.global.language;
 	const { openGeneralSettings, openProjectSettings } = useSettingsModal();
+
+	function toggleLanguage() {
+		const next = getLanguage() === "zh" ? "en" : "zh";
+		setAppLanguage(next);
+		language.set(next);
+	}
 </script>
 
 <div class="sidebar" use:focusable>
@@ -47,7 +55,7 @@
 				width={34}
 				hotkey="⌘1"
 				class={["btn-square", isWorkspacePath() && "btn-active"]}
-				tooltip="Workspace"
+				tooltip={t("nav.workspace")}
 				{disabled}
 			>
 				{#snippet custom()}
@@ -85,7 +93,7 @@
 				width={34}
 				class={["btn-square", isBranchesPath() && "btn-active"]}
 				hotkey="⌘2"
-				tooltip="Branches"
+				tooltip={t("nav.branches")}
 				{disabled}
 			>
 				{#snippet custom()}
@@ -150,7 +158,7 @@
 				width={34}
 				class={["btn-square", isHistoryPath() && "btn-active"]}
 				hotkey="⌘3"
-				tooltip="Operations history"
+				tooltip={t("nav.history")}
 				{disabled}
 			>
 				{#snippet custom()}
@@ -196,7 +204,7 @@
 					class="btn-square"
 					tooltipPosition="top"
 					tooltipAlign="start"
-					tooltip="Project settings"
+					tooltip={t("nav.projectSettings")}
 				>
 					{#snippet custom()}
 						<svg
@@ -224,9 +232,20 @@
 		</div>
 		<div class="bottom__ghost-actions">
 			<Button
+				kind="ghost"
+				tooltip={t("language.sidebarTooltip")}
+				tooltipPosition="top"
+				tooltipAlign="start"
+				width={34}
+				class="faded-btn lang-btn"
+				onclick={toggleLanguage}
+			>
+				{getLanguage() === "zh" ? "中" : "EN"}
+			</Button>
+			<Button
 				icon="mail"
 				kind="ghost"
-				tooltip="Share feedback"
+				tooltip={t("nav.feedback")}
 				tooltipPosition="top"
 				tooltipAlign="start"
 				width={34}
@@ -251,7 +270,7 @@
 	>
 		<ContextMenuSection>
 			<ContextMenuItem
-				label="Global settings"
+				label={t("nav.globalSettings")}
 				onclick={() => {
 					openGeneralSettings();
 					contextMenuOpen = false;
@@ -259,23 +278,23 @@
 				keyboardShortcut="⌘,"
 			/>
 		</ContextMenuSection>
-		<ContextMenuSection title="Theme (⌘T)">
+		<ContextMenuSection title={t("nav.theme")}>
 			<ContextMenuItem
-				label="Dark"
+				label={t("nav.themeDark")}
 				onclick={async () => {
 					uiState.global.theme.set("dark");
 					contextMenuOpen = false;
 				}}
 			/>
 			<ContextMenuItem
-				label="Light"
+				label={t("nav.themeLight")}
 				onclick={async () => {
 					uiState.global.theme.set("light");
 					contextMenuOpen = false;
 				}}
 			/>
 			<ContextMenuItem
-				label="System"
+				label={t("nav.themeSystem")}
 				onclick={async () => {
 					uiState.global.theme.set("system");
 					contextMenuOpen = false;
@@ -384,5 +403,11 @@
 		&:not(:disabled):hover {
 			--icon-opacity: 0.6;
 		}
+	}
+
+	:global(.sidebar .lang-btn) {
+		font-weight: 650;
+		font-size: 11px;
+		letter-spacing: 0.02em;
 	}
 </style>

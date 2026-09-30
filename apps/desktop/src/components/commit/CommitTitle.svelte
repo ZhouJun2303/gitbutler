@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { splitMessage } from "$lib/commits/commitMessage";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { TestId, Tooltip } from "@gitbutler/ui-svelte";
 
 	type Props = {
@@ -17,7 +18,7 @@
 		if (title) {
 			return title;
 		}
-		return editable ? "Empty commit. Drag changes here" : "Empty commit";
+		return editable ? t("commit.emptyDrag") : t("commit.empty");
 	}
 </script>
 

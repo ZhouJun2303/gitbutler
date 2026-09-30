@@ -1,5 +1,6 @@
 <script lang="ts">
 	import GoToSettingsButton from "$components/settings/GoToSettingsButton.svelte";
+	import { t } from "$lib/i18n/locale.svelte";
 	import { CardGroup, Icon } from "@gitbutler/ui-svelte";
 
 	interface Props {
@@ -7,10 +8,7 @@
 		message?: string;
 	}
 
-	const {
-		title: titleLabel = "Authorization Required",
-		message = "Authorize GitButler to use this service",
-	}: Props = $props();
+	const { title: titleLabel, message }: Props = $props();
 </script>
 
 <CardGroup>
@@ -19,10 +17,10 @@
 			<Icon name="warning" color="var(--fill-warn-bg)" />
 		{/snippet}
 		{#snippet title()}
-			{titleLabel}
+			{titleLabel ?? t("auth.required")}
 		{/snippet}
 		{#snippet caption()}
-			{message}
+			{message ?? t("auth.message")}
 		{/snippet}
 		{#snippet actions()}
 			<GoToSettingsButton />

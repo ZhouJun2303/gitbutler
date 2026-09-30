@@ -10,6 +10,7 @@
 </script>
 
 <script lang="ts">
+	import { t } from "$lib/i18n/locale.svelte";
 	import { Tooltip } from "@gitbutler/ui-svelte";
 
 	type Props = {
@@ -60,7 +61,7 @@
 			></div>
 		</Tooltip>
 	{/each}
-	<Tooltip text="Create new branch">
+	<Tooltip text={t("commit.createBranch")}>
 		<div
 			role="button"
 			tabindex="0"
